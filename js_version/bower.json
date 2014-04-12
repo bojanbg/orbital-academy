@@ -1,0 +1,13 @@
+{
+  "name": "orbital-academy",
+  "version": "0.0.0",
+  "authors": [
+    "Azhar Khan <azmanian.devil@gmail.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "threejs": "*"
+  }
+}
