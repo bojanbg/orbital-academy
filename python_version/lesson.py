@@ -35,6 +35,17 @@ class LessonsWindow(wx.Frame):
     <p>You can rotate the view by dragging with the right mouse button, and zoom in and out using the mouse wheel.</p>
     <br>
     <p>Click on a lesson to start your journey!</p>
+    <ol>
+        <li>Conic Sections</li>
+        <li>Orbital Motion</li>
+        <li>Orbital Elements - Equatorial Orbits</li>
+        <li>Circular Orbits</li>
+        <li>Hoffman Transfers</li>
+        <li>Six Orbital Elements</li>
+        <li>Plane Changes</li>
+        <li>Orbital Intercept</li>
+        <li>Orbital Rendezvous</li>
+    </ol>
 </body>
 </html>
 """
