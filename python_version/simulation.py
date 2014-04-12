@@ -1,13 +1,13 @@
-# Holds the state of the simulation
-# Should be controllable by outside modules via a control interface of some sort
 import numpy
 
-from body import Body, EARTH_MU
+from body import Body, EARTH_R, EARTH_MU
 
 
-class Scene(object):
+class Simulation(object):
 
     def __init__(self, num_random_objs):
+        self.switch_view_north()
+
         self.bodies = []
         self.selected_body = 0
         # For circular orbits, v = sqrt(gamma/r)
@@ -25,3 +25,8 @@ class Scene(object):
 
     def current_body(self):
         return self.bodies[self.selected_body]
+
+    def switch_view_north(self):
+        """Switches the view to a North top-down view from the default distance."""
+        self.camera_up = (0.0, 1.0, 0.0); self.camera_right = (1.0, 0.0, 0.0)
+        self.camera_vector = (0.0, 0.0, 6 * EARTH_R)

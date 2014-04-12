@@ -77,11 +77,11 @@ class VizWindow(wx.Frame):
         menubar.Enable(self.ID_Pause_Sim, False)
         return menubar
 
-    def __init__(self, scene):
+    def __init__(self, sim):
         wx.Frame.__init__(self, None, title="Orbital Academy v0.1", size=(1024, 1024))
-        self.scene = scene
+        self.sim = sim
         self.main_panel = wx.Panel(self)
-        self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.scene)
+        self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.sim)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.gl_canvas, 1, wx.EXPAND)
         self.main_panel.SetSizer(sizer)
@@ -103,20 +103,20 @@ class VizWindow(wx.Frame):
     def OnBodyChange(self, evt):
         evtid = evt.GetId()
         if evtid == self.ID_First_Body:
-            self.scene.selected_body = 0
+            self.sim.selected_body = 0
         elif evtid == self.ID_Next_Body:
-            self.scene.selected_body += 1
+            self.sim.selected_body += 1
         elif evtid == self.ID_Prev_Body:
-            self.scene.selected_body -= 1
+            self.sim.selected_body -= 1
         elif evtid == self.ID_Last_Body:
-            self.scene.selected_body = len(self.scene.bodies) - 1
+            self.sim.selected_body = len(self.sim.bodies) - 1
         else:
             assert 'Unknown event ID!'
-        self.scene.selected_body %= len(self.scene.bodies)
+        self.sim.selected_body %= len(self.sim.bodies)
         self.gl_canvas.Refresh()
 
     def OnBodyPos(self, evt):
-        evtid = evt.GetId(); curr_body = self.scene.current_body()
+        evtid = evt.GetId(); curr_body = self.sim.current_body()
         if evtid == self.ID_Body_Pos_Cycle:
             curr_body.pos_viz_mode = (curr_body.pos_viz_mode + 1) % 3
         else:
@@ -125,7 +125,7 @@ class VizWindow(wx.Frame):
         self.gl_canvas.Refresh()
 
     def OnBodyOrbit(self, evt):
-        evtid = evt.GetId(); curr_body = self.scene.current_body()
+        evtid = evt.GetId(); curr_body = self.sim.current_body()
         if evtid == self.ID_Body_Orbit_Cycle:
             curr_body.orbit_viz_mode = (curr_body.orbit_viz_mode + 1) % 3
         else:
@@ -136,25 +136,25 @@ class VizWindow(wx.Frame):
     def OnBodiesPos(self, evt):
         evtid = evt.GetId()
         if evtid == self.ID_Bodies_Pos_Cycle:
-            self.scene.pos_viz_mode = (self.scene.pos_viz_mode + 1) % 3
+            self.sim.pos_viz_mode = (self.sim.pos_viz_mode + 1) % 3
         else:
-            self.scene.pos_viz_mode = self.Bodies_Pos_Modes[evtid]
-        self.menu.Check(self.Bodies_Pos_Modes_REV[self.scene.pos_viz_mode], True)
-        self.menu.Check(self.Body_Pos_Modes_REV[self.scene.pos_viz_mode], True)
-        for body in self.scene.bodies:
-            body.pos_viz_mode = self.scene.pos_viz_mode
+            self.sim.pos_viz_mode = self.Bodies_Pos_Modes[evtid]
+        self.menu.Check(self.Bodies_Pos_Modes_REV[self.sim.pos_viz_mode], True)
+        self.menu.Check(self.Body_Pos_Modes_REV[self.sim.pos_viz_mode], True)
+        for body in self.sim.bodies:
+            body.pos_viz_mode = self.sim.pos_viz_mode
         self.gl_canvas.Refresh()
 
     def OnBodiesOrbit(self, evt):
         evtid = evt.GetId()
         if evtid == self.ID_Bodies_Orbit_Cycle:
-            self.scene.orbit_viz_mode = (self.scene.orbit_viz_mode + 1) % 3
+            self.sim.orbit_viz_mode = (self.sim.orbit_viz_mode + 1) % 3
         else:
-            self.scene.orbit_viz_mode = self.Bodies_Orbit_Modes[evtid]
-        self.menu.Check(self.Bodies_Orbit_Modes_REV[self.scene.orbit_viz_mode], True)
-        self.menu.Check(self.Body_Orbit_Modes_REV[self.scene.orbit_viz_mode], True)
-        for body in self.scene.bodies:
-            body.orbit_viz_mode = self.scene.orbit_viz_mode
+            self.sim.orbit_viz_mode = self.Bodies_Orbit_Modes[evtid]
+        self.menu.Check(self.Bodies_Orbit_Modes_REV[self.sim.orbit_viz_mode], True)
+        self.menu.Check(self.Body_Orbit_Modes_REV[self.sim.orbit_viz_mode], True)
+        for body in self.sim.bodies:
+            body.orbit_viz_mode = self.sim.orbit_viz_mode
         self.gl_canvas.Refresh()
 
     def OnToggleSim(self, evt):
@@ -171,9 +171,9 @@ class VizWindow(wx.Frame):
             assert 'Unknown event ID!'
 
     def OnTimer(self, evt):
-        self.scene.time += 10.0
-        for body in self.scene.bodies:
-            body.calc_state_vectors(self.scene.time)
+        self.sim.time += 10.0
+        for body in self.sim.bodies:
+            body.calc_state_vectors(self.sim.time)
         self.gl_canvas.Refresh()
 
     def OnClose(self, evt):

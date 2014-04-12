@@ -1,7 +1,7 @@
 import wx
 
-from main_window import VizWindow
-from scene import Scene
+from viz_window import VizWindow
+from simulation import Simulation
 from lesson import *
 
 
@@ -10,12 +10,12 @@ if __name__ == '__main__':
     class OrbitzApp(wx.App):
 
         def OnInit(self):
-            scene = Scene(4)
-            visualization_window = VizWindow(scene)
+            simulation = Simulation(4)
+            visualization_window = VizWindow(simulation)
             visualization_window.Show(True)
             self.SetTopWindow(visualization_window)
 
-            lessons_window = LessonsWindow(scene)
+            lessons_window = LessonsWindow(self, simulation)
             lessons_window.Show(True)
             return True
 
