@@ -2,6 +2,7 @@ import wx
 
 from orbitz_display import *
 from orbitz_calc import *
+from lesson import *
 
 def reverse_dict(d):
     return dict((v,k) for k, v in d.iteritems())
@@ -190,6 +191,9 @@ if __name__ == '__main__':
             orbitz_win = OrbitzMainWin()
             orbitz_win.Show(True)
             self.SetTopWindow(orbitz_win)
+
+            lessons_win = LessonsWindow()
+            lessons_win.Show(True)
             return True
 
     app = OrbitzApp(False)
