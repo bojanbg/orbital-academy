@@ -1,12 +1,14 @@
-import wx
-from wx.glcanvas import GLCanvas, GLContext
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from orbitz_calc import *
-import vecmath
+import numpy
 
+import wx
+from wx.glcanvas import GLCanvas, GLContext
+
+import vecmath
+from body import Body, EARTH_R
 
 class OrbitzGLCanvas(GLCanvas):
 

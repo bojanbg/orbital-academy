@@ -1,8 +1,9 @@
 import wx
 
+from scene import Scene
 from orbitz_display import *
-from orbitz_calc import *
 from lesson import *
+
 
 def reverse_dict(d):
     return dict((v,k) for k, v in d.iteritems())
@@ -198,24 +199,3 @@ if __name__ == '__main__':
 
     app = OrbitzApp(False)
     app.MainLoop()
-
-"""
-TODO:
--Orbit visualisation:
- -Draw symbology for nodes
-  -Choose whether to go with triangles or semi-filled squares
- +Improve the quality of symbols (improve drawing)
- +Option of choosing to draw radius-vectors on per-orbit basis
- +Option to cycle between orbit display modes
-  -Positions only; positions and orbit line; positions, orbit line and orbit symbols
- +All orbits - position only; positions and orbit line; positions, orbit line and orbit symbols
--Identify selected orbit by flashing it
--Cycle planet display options
- -Hidden, transparent, transparent with geo grid, solid, solid with geo-grid)
--Quick snap views
- -Eg. north overhead, fit all displayed orbits
- -Vernal equinox
- -Down Y axis
- -North overhead selected orbit; fit that orbit to screen
--Autocad-like 4 view windows - top, orbitwards, sunwards, 3d
-"""
