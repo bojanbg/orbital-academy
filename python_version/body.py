@@ -28,6 +28,9 @@ class Body(object):
         self.pos_viz_mode = Body.POSITION_VISUALISATIONS['symbol']
         self.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['all']
 
+        # For drawing partial orbits, these would change to the angles required
+        self.orbit_start, self.orbit_end = 0.0, 360.0
+
     def calc_orbital_params(self):
         #Calculates Keplerian orbital parameters based on the state vectors
         #This method should be called after each change to velocity vector

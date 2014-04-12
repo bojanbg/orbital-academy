@@ -163,7 +163,7 @@ def draw_orbits(glcanvas):
             glLineStipple(1, body.stipple)
         else:
             glDisable(GL_LINE_STIPPLE)
-        gluDisk(quadric, body.a, body.a, 360, 1)
+        gluPartialDisk(quadric, body.a, body.a, 360, 1, body.orbit_start, body.orbit_end)
         gluDeleteQuadric(quadric)
         glDisable(GL_LINE_STIPPLE)
 

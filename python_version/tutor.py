@@ -1,6 +1,20 @@
 import wx
 import wx.html
 
+from lessons import *  # We use this variant of import because there can be many lessons
+
+
+class TutorHTMLWindow(wx.html.HtmlWindow):
+    # We need to subclass to be able to intercept OnLinkClicked event
+    def __init__(self, parent):
+        wx.html.HtmlWindow.__init__(self, parent)
+        self.parent = parent
+        if "gtk2" in wx.PlatformInfo:
+            self.SetStandardFonts()
+
+    def OnLinkClicked(self, linkinfo):
+        self.parent.OnLinkClicked(linkinfo)
+
 
 class LessonsWindow(wx.Frame):
     def __init__(self, parent, sim, viz_window):
@@ -23,7 +37,7 @@ class LessonsWindow(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnNext, button_next)
         subbox.Add(button_next, 1, wx.GROW | wx.ALL, 2)
 
-        self.html_window = wx.html.HtmlWindow(self)
+        self.html_window = TutorHTMLWindow(self)
         contents = """\
 <!DOCTYPE html>
 <html>
@@ -32,7 +46,7 @@ class LessonsWindow(wx.Frame):
 </head>
 <body>
     <h3><center>Welcome to <b>Orbital Academy</b></center></h3>
-    <p>Orbital Academy is a place to learn orbital mechanics. The curriculum is organized into lessons
+    <p>Orbital Academy is a place where you can learn orbital mechanics. The curriculum is organized into lessons
     of progressive difficulty. After you completed them all you will have become an expert spacecraft pilot!</p>
     <br>
     <p>The display on the left shows Earth orbital space.</p>
@@ -41,7 +55,7 @@ class LessonsWindow(wx.Frame):
     <p>Click on a lesson to start your journey!</p>
     <ol>
         <li>Conic Sections</li>
-        <li>Orbital Motion</li>
+        <li><a href="Lesson1">Orbital Motion</a></li>
         <li>Orbital Elements - Equatorial Orbits</li>
         <li>Circular Orbits</li>
         <li>Hoffman Transfers</li>
@@ -63,23 +77,17 @@ class LessonsWindow(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
+    def OnLinkClicked(self, linkinfo):
+        print linkinfo
+
     def OnPrev(self, evt):
-        self.viz_window.switch_view_north()
-        self.sim.draw_atmosphere = False
-        self.sim.draw_mountain = True
+        pass
 
     def OnNext(self, evt):
-        print 'OnNext'
+        pass
 
     def OnRunPause(self, evt):
-        print 'OnRunPause'
+        pass
 
     def OnClose(self, evt):
         self.Destroy()
-
-
-class Lesson(object):
-
-    def __init__(self, sim, viz):
-        self.sim = sim
-        self.viz = viz

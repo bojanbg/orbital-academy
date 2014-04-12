@@ -2,7 +2,7 @@ import wx
 
 from viz_window import VizWindow
 from simulation import Simulation
-from lesson import *
+from tutor import *
 
 
 if __name__ == '__main__':
