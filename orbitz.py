@@ -77,7 +77,7 @@ class OrbitzMainWin(wx.Frame):
         return menubar
 
     def __init__(self):
-        wx.Frame.__init__(self, None, title="Orbitz v0.06", size=(1024, 1024))
+        wx.Frame.__init__(self, None, title="Orbitz v0.07", size=(1024, 1024))
         self.scene = Scene(4)
         self.main_panel = wx.Panel(self)
         self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.scene)

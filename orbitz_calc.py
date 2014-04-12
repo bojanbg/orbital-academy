@@ -1,7 +1,7 @@
 import numpy
 
 EARTH_R = 6.371E6
-EARTH_MU = 3.986004418E14 #G * M_EARTH
+EARTH_MU = 3.986004418E14  # G * M_EARTH
 SQRT_EARTH_MU = numpy.sqrt(EARTH_MU)
 
 
@@ -10,8 +10,10 @@ class Scene(object):
     def __init__(self, num_random_objs):
         self.bodies = []
         self.selected_body = 0
-        self.bodies.append(Body((7.0E6, 0.0, 0.0), (0.0, numpy.sqrt(EARTH_MU / 7.0E6), 0.0), 0.0, (0.0, 1.0, 1.0, 1.0))) #For circular orbits, v = sqrt(gamma/r)
-        self.bodies.append(Body((-7.5E6, 0.0, 0.0), (0.0, -numpy.sqrt(EARTH_MU / 7.5E6), 0.0), 0.0)) #For circular orbits, v = sqrt(gamma/r)
+        # For circular orbits, v = sqrt(gamma/r)
+        self.bodies.append(Body((7.0E6, 0.0, 0.0), (0.0, numpy.sqrt(EARTH_MU / 7.0E6), 0.0), 0.0, (0.0, 1.0, 1.0, 1.0)))
+        self.bodies.append(Body((-7.5E6, 0.0, 0.0), (0.0, -numpy.sqrt(EARTH_MU / 7.5E6), 0.0), 0.0))
+
         for x in xrange(num_random_objs):
             self.bodies.append(Body.generate_random_orbit())
 
@@ -26,8 +28,8 @@ class Scene(object):
 
 
 class Body(object):
-    POSITION_VISUALISATIONS = {'symbol': 0, 'rv': 1, 'dot': 2,}
-    ORBIT_VISUALISATIONS = {'all': 0, 'orbit': 1, 'none': 2,}
+    POSITION_VISUALISATIONS = {'symbol': 0, 'rv': 1, 'dot': 2}
+    ORBIT_VISUALISATIONS = {'all': 0, 'orbit': 1, 'none': 2}
 
     def __init__(self, r, v, t0, orbit_color=(1.0, 1.0, 0.0, 1.0), stipple=None):
         if isinstance(r, tuple):
@@ -55,10 +57,12 @@ class Body(object):
         #a = - mu / (v^2 - 2 * mu/r)
         v_2 = numpy.vdot(self.v, self.v)
         r_ = numpy.linalg.norm(self.r)
-        self.a = -EARTH_MU / (v_2 - 2 * EARTH_MU / r_) #TODO: this won't work for parabolic trajectories (as the denominator is 0)!
+        # TODO: this won't work for parabolic trajectories (as the denominator is 0)!
+        self.a = -EARTH_MU / (v_2 - 2 * EARTH_MU / r_)
 
         #T = 2*Pi*sqrt(a^3/ni)
-        self.T = 2.0 * numpy.pi * numpy.sqrt(self.a**3 / EARTH_MU) #TODO: again, orbital period is not defined for non-bound orbits
+        # TODO: again, orbital period is not defined for non-bound orbits
+        self.T = 2.0 * numpy.pi * numpy.sqrt(self.a**3 / EARTH_MU)
 
         #Calculate specific relative angular momentum h = r X v
         h = numpy.cross(self.r, self.v)
@@ -70,7 +74,8 @@ class Body(object):
         self.e = numpy.linalg.norm(e)
 
         i_rad = numpy.arccos(h[2] / h_) #h[2] = hz
-        self.i = numpy.degrees(i_rad) #However, some soruces state that if hz < 0 then inclination is 180 deg - i; should check this
+        self.i = numpy.degrees(i_rad)
+        #However, some soruces state that if hz < 0 then inclination is 180 deg - i; should check this
         #n is the vector pointing to the ascending node
         n = numpy.array((-h[1], h[0], 0))
         n_ = numpy.linalg.norm(n)
@@ -116,13 +121,14 @@ class Body(object):
         self.calc_orbital_params()
 
     def calc_state_vectors(self, t):
-        #Based on Keplerian orbital paramters calculates state vectors at time t0 + t
-        #Algorithm from "Fundamentals of astrodynamics" by Roger R. Bate, Donald D. Mueller and Jerry E. White
+        # Based on Keplerian orbital paramters calculates state vectors at time t0 + t
+        # Algorithm from "Fundamentals of astrodynamics" by Roger R. Bate, Donald D. Mueller and Jerry E. White
 
         def evaluate_t_dt(x):
-            #Evaluates t(x) and dt(x)/dx and returns them as a tuple.
-            #We use these to find x via Newton's numerical approximation method.
-            #Both values are evaluated in one function (as opposed to evaluate_t and evaluate_dt) to avoid calculating z, sqrt(z), C, S twice.
+            # Evaluates t(x) and dt(x)/dx and returns them as a tuple.
+            # We use these to find x via Newton's numerical approximation method.
+            # Both values are evaluated in one function (as opposed to evaluate_t and evaluate_dt)
+            # to avoid calculating z, sqrt(z), C, S twice.
             z = x**2 / self.a
             sqrt_z = numpy.sqrt(z)
             C = (1.0 - numpy.cos(sqrt_z)) / z
@@ -131,10 +137,13 @@ class Body(object):
             dt = (x**2 * C + numpy.vdot(self.r0, self.v0) / SQRT_EARTH_MU * x * (1.0 - z * S) + self.r0_ * (1.0 - z * C)) / SQRT_EARTH_MU
             return (t, dt)
 
-        #First we find x using Newton's method. It converges remarkably quickly.
-        #For elliptical orbits (including circular), we use sqrt(mu)*(t-t0)/a as the first approximation
-        #TODO: what do we do for parabolic and hyperbolic orbits? There's a value in the book for hyperbolic oribts, but it's VERY complicated
-        delta_t = t - self.t0 #We simplfy by setting t0 to be 0 and solving for delta_t, instead of solving for t with some non-zero t0 (which is more complicated)
+        # First we find x using Newton's method. It converges remarkably quickly.
+        # For elliptical orbits (including circular), we use sqrt(mu)*(t-t0)/a as the first approximation
+        # NOTE: Parabolic and hyperbolic orbits are not supported at the moment!
+
+        # We simplfy by setting t0 to be 0 and solving for delta_t, instead of solving for t with some non-zero t0
+        # (which is more complicated)
+        delta_t = t - self.t0
         x_guess = SQRT_EARTH_MU * delta_t / self.a #Initial guess
         t_guess, slope = evaluate_t_dt(x_guess)
         while abs(delta_t - t_guess) > 1.0E-10:
@@ -143,8 +152,8 @@ class Body(object):
         x = x_guess
         #TODO: rewrite above into a for loop with a break so that the loop is guaranteed to exit as opposed to now
 
-        #x is now the value we've been looking for
-        #Next, we calculate f, g, f_dot and g_dot and from these r and v
+        # x is now the value we've been looking for
+        # Next, we calculate f, g, f_dot and g_dot and from these r and v
         z = x**2 / self.a
         sqrt_z = numpy.sqrt(z)
         C = (1.0 - numpy.cos(sqrt_z)) / z
@@ -178,7 +187,8 @@ class Body(object):
         import random
         rho = random.uniform(EARTH_R + 200.0, 2 * EARTH_R + 200)
         azimuth = random.uniform(0.0, 2.0 * numpy.pi)
-        elevation = random.uniform(-numpy.pi / 4.0, numpy.pi / 4.0)  #We don't want orbits with more than 45 degrees inclination
+        # We don't want orbits with more than 45 degrees inclination
+        elevation = random.uniform(-numpy.pi / 4.0, numpy.pi / 4.0)
         x = rho * numpy.cos(elevation) * numpy.cos(azimuth)
         y = rho * numpy.cos(elevation) * numpy.sin(azimuth)
         z = rho * numpy.sin(elevation)
@@ -186,12 +196,14 @@ class Body(object):
         r = numpy.array((x, y, z))
         z_axis = numpy.array((0.0, 0.0, -rho))
         v_unit = numpy.cross(r, z_axis)
-        v_unit = v_unit / numpy.linalg.norm(v_unit)
+        v_unit /= numpy.linalg.norm(v_unit)
         circular_velocity = numpy.sqrt(EARTH_MU / rho)
         velocity = random.uniform(1.0, 1.2) * circular_velocity
         v = v_unit * velocity
 
-        color = (0.50 + random.randint(0, 2) * 0.25, 0.50 + random.randint(0, 2) * 0.25, 0.50 + random.randint(0, 2) * 0.25, 1.0)
+        def random_color():
+            return 0.50 + random.randint(0, 2) * 0.25
+        color = (random_color(), random_color(), random_color(), 1.0)
         stipple = random.choice((None, 0b0101010101010101, 0b0110011001100110))
         body = Body(r, v, 0.0, color, stipple)
         body.calc_state_vectors(random.uniform(-3600.0, 3600.0))

@@ -84,6 +84,7 @@ class OrbitzGLCanvas(GLCanvas):
             self.camera_up = vecmath.normalize_vec(vecmath.rotate_vec(self.camera_up, self.camera_right, ud_angle))
             self.camera_vector = vecmath.rotate_vec(self.camera_vector, self.camera_right, ud_angle)
 
+
 def load_texture(filename):
     texture_image = wx.Image(filename, wx.BITMAP_TYPE_ANY, -1)
     texture_w, texture_h = texture_image.GetWidth(), texture_image.GetHeight()
@@ -95,6 +96,7 @@ def load_texture(filename):
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture_w, texture_h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data)
     return texture_id
 
+
 def clear_and_setup_scene(glcanvas):
     #First we clear the color and depth buffer.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -103,15 +105,18 @@ def clear_and_setup_scene(glcanvas):
     glMatrixMode(GL_PROJECTION); glLoadIdentity()
     camera_distance = vecmath.magnitude(glcanvas.camera_vector)
     gluPerspective(40.0, 1.0 * glcanvas.w / glcanvas.h, camera_distance / 10.0, 2.0 * camera_distance)
-    
-    glcanvas.projection_matrix = glGetDoublev(GL_PROJECTION_MATRIX)  #Save projection matrix for later use with gluProject
 
-    #The view matrix represents a camera looking at origin (our coordinate system is conviniently centered at the planet center) from camera_distance away.
+    # Save projection matrix for later use with gluProject
+    glcanvas.projection_matrix = glGetDoublev(GL_PROJECTION_MATRIX)
+
+    # The view matrix represents a camera looking at origin (our coordinate system is conviniently centered
+    # at the planet center) from camera_distance away.
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     gluLookAt(glcanvas.camera_vector[0], glcanvas.camera_vector[1], glcanvas.camera_vector[2], 
                   0.0, 0.0, 0.0,
                   glcanvas.camera_up[0], glcanvas.camera_up[1], glcanvas.camera_up[2])
+
 
 def draw_scene(glcanvas):
     glEnable(GL_CULL_FACE)
@@ -119,8 +124,9 @@ def draw_scene(glcanvas):
 
     draw_orbits(glcanvas)
     draw_orbit_symbology(glcanvas)
-    draw_planet(glcanvas)
+    draw_planet(glcanvas, True)
     draw_info(glcanvas)
+
 
 def draw_orbits(glcanvas):
 
@@ -172,6 +178,7 @@ def draw_orbits(glcanvas):
             draw_orbit(glcanvas, body)
         if body.pos_viz_mode == Body.POSITION_VISUALISATIONS['rv']:
             draw_radius_vector(glcanvas, body)
+
 
 def draw_orbit_symbology(glcanvas):
 
@@ -230,7 +237,8 @@ def draw_orbit_symbology(glcanvas):
     glMatrixMode(GL_PROJECTION); glPopMatrix()
     glMatrixMode(GL_MODELVIEW); glPopMatrix()
 
-def draw_planet(glcanvas):
+
+def draw_planet(glcanvas, atmosphere=True):
     glBegin(GL_LINES)
     #North vector
     glColor4f(1.0, 0.0, 0.0, 1.0)
@@ -264,12 +272,15 @@ def draw_planet(glcanvas):
     glDisable(GL_TEXTURE_2D)
     gluDeleteQuadric(quad)    
 
-    glColor4f(0.5, 0.5, 0.8, 0.25)
-    quad = gluNewQuadric()
-    gluSphere(quad, EARTH_R * 1.02, 128, 128)
-    gluDeleteQuadric(quad)    
+    if atmosphere:
+        glColor4f(0.5, 0.5, 0.8, 0.25)
+        quad = gluNewQuadric()
+        gluSphere(quad, EARTH_R * 1.02, 128, 128)
+        gluDeleteQuadric(quad)
+
     glPopAttrib()
     glDepthMask(True)
+
 
 def draw_info(glcanvas):
 
