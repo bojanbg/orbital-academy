@@ -1,18 +1,22 @@
-import wx
-from wx.glcanvas import GLCanvas, GLContext
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from orbitz_calc import *
+import numpy
+
+import wx
+from wx.glcanvas import GLCanvas, GLContext
+
 import vecmath
+from body import Body, EARTH_R
 
 
 class OrbitzGLCanvas(GLCanvas):
 
     def __init__(self, parent, scene):
         GLCanvas.__init__(self, parent, -1, size=(1024, 1024), 
-                          attribList=(wx.glcanvas.WX_GL_RGBA, wx.glcanvas.WX_GL_DOUBLEBUFFER, 0, wx.glcanvas.WX_GL_DEPTH_SIZE, 32, 0))
+                          attribList=(wx.glcanvas.WX_GL_RGBA, wx.glcanvas.WX_GL_DOUBLEBUFFER,
+                                      0, wx.glcanvas.WX_GL_DEPTH_SIZE, 32, 0))
         self.context = GLContext(self)
         self.SetCurrent(self.context)
         self.context_initialized = False
@@ -22,8 +26,6 @@ class OrbitzGLCanvas(GLCanvas):
 
         self.rotate = False
         self.beginx = 0.0; self.beginy = 0.0
-        self.camera_up = (0.0, 1.0, 0.0); self.camera_right = (1.0, 0.0, 0.0)
-        self.camera_vector = (0.0, 0.0, 6 * EARTH_R)
 
         wx.EVT_SIZE(self, self.OnSize)
         wx.EVT_PAINT(self, self.OnPaint)
@@ -46,7 +48,7 @@ class OrbitzGLCanvas(GLCanvas):
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
         self.SetCurrent(self.context)
-        clear_and_setup_scene(self)
+        clear_and_setup_scene(self, self.scene)
         draw_scene(self)
         self.SwapBuffers()  #Works even if we don't have double buffering enabled; does glFlush() automatically
 
@@ -66,10 +68,10 @@ class OrbitzGLCanvas(GLCanvas):
 
     def OnMouseWheel(self, event):
         if event.GetWheelRotation() < 0:
-            self.camera_vector = vecmath.scale_vector(self.camera_vector, 1.05)
+            self.scene.camera_vector = vecmath.scale_vector(self.scene.camera_vector, 1.05)
             self.Refresh()
         else:
-            self.camera_vector = vecmath.scale_vector(self.camera_vector, 1.0 / 1.05)
+            self.scene.camera_vector = vecmath.scale_vector(self.scene.camera_vector, 1.0 / 1.05)
             self.Refresh()
 
     def OnEraseBackground(self, event):
@@ -78,11 +80,13 @@ class OrbitzGLCanvas(GLCanvas):
 
     def rotate_camera(self, lr_angle, ud_angle):
         if abs(lr_angle) > 0:
-            self.camera_right = vecmath.normalize_vec(vecmath.rotate_vec(self.camera_right, self.camera_up, lr_angle))
-            self.camera_vector = vecmath.rotate_vec(self.camera_vector, self.camera_up, lr_angle)
+            self.scene.camera_right = vecmath.normalize_vec(
+                vecmath.rotate_vec(self.scene.camera_right, self.scene.camera_up, lr_angle))
+            self.scene.camera_vector = vecmath.rotate_vec(self.scene.camera_vector, self.scene.camera_up, lr_angle)
         if abs(ud_angle) > 0:
-            self.camera_up = vecmath.normalize_vec(vecmath.rotate_vec(self.camera_up, self.camera_right, ud_angle))
-            self.camera_vector = vecmath.rotate_vec(self.camera_vector, self.camera_right, ud_angle)
+            self.scene.camera_up = vecmath.normalize_vec(
+                vecmath.rotate_vec(self.scene.camera_up, self.scene.camera_right, ud_angle))
+            self.scene.camera_vector = vecmath.rotate_vec(self.scene.camera_vector, self.scene.camera_right, ud_angle)
 
 
 def load_texture(filename):
@@ -97,13 +101,13 @@ def load_texture(filename):
     return texture_id
 
 
-def clear_and_setup_scene(glcanvas):
+def clear_and_setup_scene(glcanvas, scene):
     #First we clear the color and depth buffer.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     #Then we set up the projection and view matrices.
     glMatrixMode(GL_PROJECTION); glLoadIdentity()
-    camera_distance = vecmath.magnitude(glcanvas.camera_vector)
+    camera_distance = vecmath.magnitude(scene.camera_vector)
     gluPerspective(40.0, 1.0 * glcanvas.w / glcanvas.h, camera_distance / 10.0, 2.0 * camera_distance)
 
     # Save projection matrix for later use with gluProject
@@ -113,9 +117,9 @@ def clear_and_setup_scene(glcanvas):
     # at the planet center) from camera_distance away.
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(glcanvas.camera_vector[0], glcanvas.camera_vector[1], glcanvas.camera_vector[2], 
+    gluLookAt(scene.camera_vector[0], scene.camera_vector[1], scene.camera_vector[2], 
                   0.0, 0.0, 0.0,
-                  glcanvas.camera_up[0], glcanvas.camera_up[1], glcanvas.camera_up[2])
+                  scene.camera_up[0], scene.camera_up[1], scene.camera_up[2])
 
 
 def draw_scene(glcanvas):
