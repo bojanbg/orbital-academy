@@ -54,3 +54,7 @@ docs/_build/
 
 # IDE files
 .idea/
+
+# Installed Modules
+*/node_modules/*
+*/bower_components/*
