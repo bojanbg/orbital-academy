@@ -15,7 +15,7 @@ if __name__ == '__main__':
             visualization_window.Show(True)
             self.SetTopWindow(visualization_window)
 
-            lessons_window = LessonsWindow(self, simulation)
+            lessons_window = LessonsWindow(self, simulation, visualization_window)
             lessons_window.Show(True)
             return True
 

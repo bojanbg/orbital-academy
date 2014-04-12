@@ -3,10 +3,11 @@ import wx.html
 
 
 class LessonsWindow(wx.Frame):
-    def __init__(self, parent, sim):
+    def __init__(self, parent, sim, viz_window):
         wx.Frame.__init__(self, None, title="Instructions", size=(640, 1024))
         self.parent = parent
         self.sim = sim
+        self.viz_window = viz_window
 
         subbox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -63,9 +64,9 @@ class LessonsWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     def OnPrev(self, evt):
-        #Change scene so that the camera position is from somewhere else (don't know where)
-        self.sim.switch_view_north()
-        #Change scene so that there's only one, circular orbit
+        self.viz_window.switch_view_north()
+        self.sim.draw_atmosphere = False
+        self.sim.draw_mountain = True
 
     def OnNext(self, evt):
         print 'OnNext'
@@ -75,3 +76,10 @@ class LessonsWindow(wx.Frame):
 
     def OnClose(self, evt):
         self.Destroy()
+
+
+class Lesson(object):
+
+    def __init__(self, sim, viz):
+        self.sim = sim
+        self.viz = viz

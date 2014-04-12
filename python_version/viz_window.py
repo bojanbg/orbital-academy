@@ -1,7 +1,7 @@
 import wx
 
 from opengl_orbits import OrbitzGLCanvas
-
+from body import EARTH_R
 
 def reverse_dict(d):
     return dict((v, k) for k, v in d.iteritems())
@@ -82,6 +82,8 @@ class VizWindow(wx.Frame):
         self.sim = sim
         self.main_panel = wx.Panel(self)
         self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.sim)
+        self.switch_view_north()
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.gl_canvas, 1, wx.EXPAND)
         self.main_panel.SetSizer(sizer)
@@ -99,6 +101,13 @@ class VizWindow(wx.Frame):
 
         self.timer = wx.Timer(self, self.ID_Timer)
         self.Bind(wx.EVT_TIMER, self.OnTimer, id=self.ID_Timer)
+
+    def switch_view_north(self):
+        """Switches the view to a North top-down view from the default distance."""
+        self.gl_canvas.camera_up = (0.0, 1.0, 0.0); self.gl_canvas.camera_right = (1.0, 0.0, 0.0)
+        self.gl_canvas.camera_vector = (0.0, 0.0, 6 * EARTH_R)
+        self.gl_canvas.Refresh()
+
 
     def OnBodyChange(self, evt):
         evtid = evt.GetId()

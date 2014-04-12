@@ -10,10 +10,9 @@ from wx.glcanvas import GLCanvas, GLContext
 import vecmath
 from body import Body, EARTH_R
 
-
 class OrbitzGLCanvas(GLCanvas):
 
-    def __init__(self, parent, scene):
+    def __init__(self, parent, sim):
         GLCanvas.__init__(self, parent, -1, size=(1024, 1024), 
                           attribList=(wx.glcanvas.WX_GL_RGBA, wx.glcanvas.WX_GL_DOUBLEBUFFER,
                                       0, wx.glcanvas.WX_GL_DEPTH_SIZE, 32, 0))
@@ -21,7 +20,7 @@ class OrbitzGLCanvas(GLCanvas):
         self.SetCurrent(self.context)
         self.context_initialized = False
         
-        self.scene = scene
+        self.sim = sim
         self.projection_matrix = None
 
         self.rotate = False
@@ -38,6 +37,9 @@ class OrbitzGLCanvas(GLCanvas):
         self.OnSize(None)  #Set up initial viewport size
         glutInit()  #Initialize GLUT
 
+    def set_bodies(self):
+        pass
+
     def OnSize(self, evt):
         self.w, self.h = self.GetClientSize()
         glViewport(0, 0, self.w, self.h) #Change viewport size
@@ -48,7 +50,7 @@ class OrbitzGLCanvas(GLCanvas):
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
         self.SetCurrent(self.context)
-        clear_and_setup_scene(self, self.scene)
+        clear_and_setup_scene(self)
         draw_scene(self)
         self.SwapBuffers()  #Works even if we don't have double buffering enabled; does glFlush() automatically
 
@@ -68,10 +70,10 @@ class OrbitzGLCanvas(GLCanvas):
 
     def OnMouseWheel(self, event):
         if event.GetWheelRotation() < 0:
-            self.scene.camera_vector = vecmath.scale_vector(self.scene.camera_vector, 1.05)
+            self.camera_vector = vecmath.scale_vector(self.camera_vector, 1.05)
             self.Refresh()
         else:
-            self.scene.camera_vector = vecmath.scale_vector(self.scene.camera_vector, 1.0 / 1.05)
+            self.camera_vector = vecmath.scale_vector(self.camera_vector, 1.0 / 1.05)
             self.Refresh()
 
     def OnEraseBackground(self, event):
@@ -80,13 +82,13 @@ class OrbitzGLCanvas(GLCanvas):
 
     def rotate_camera(self, lr_angle, ud_angle):
         if abs(lr_angle) > 0:
-            self.scene.camera_right = vecmath.normalize_vec(
-                vecmath.rotate_vec(self.scene.camera_right, self.scene.camera_up, lr_angle))
-            self.scene.camera_vector = vecmath.rotate_vec(self.scene.camera_vector, self.scene.camera_up, lr_angle)
+            self.camera_right = vecmath.normalize_vec(
+                vecmath.rotate_vec(self.camera_right, self.camera_up, lr_angle))
+            self.camera_vector = vecmath.rotate_vec(self.camera_vector, self.camera_up, lr_angle)
         if abs(ud_angle) > 0:
-            self.scene.camera_up = vecmath.normalize_vec(
-                vecmath.rotate_vec(self.scene.camera_up, self.scene.camera_right, ud_angle))
-            self.scene.camera_vector = vecmath.rotate_vec(self.scene.camera_vector, self.scene.camera_right, ud_angle)
+            self.camera_up = vecmath.normalize_vec(
+                vecmath.rotate_vec(self.camera_up, self.camera_right, ud_angle))
+            self.camera_vector = vecmath.rotate_vec(self.camera_vector, self.camera_right, ud_angle)
 
 
 def load_texture(filename):
@@ -101,13 +103,13 @@ def load_texture(filename):
     return texture_id
 
 
-def clear_and_setup_scene(glcanvas, scene):
+def clear_and_setup_scene(glcanvas):
     #First we clear the color and depth buffer.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     #Then we set up the projection and view matrices.
     glMatrixMode(GL_PROJECTION); glLoadIdentity()
-    camera_distance = vecmath.magnitude(scene.camera_vector)
+    camera_distance = vecmath.magnitude(glcanvas.camera_vector)
     gluPerspective(40.0, 1.0 * glcanvas.w / glcanvas.h, camera_distance / 10.0, 2.0 * camera_distance)
 
     # Save projection matrix for later use with gluProject
@@ -117,9 +119,9 @@ def clear_and_setup_scene(glcanvas, scene):
     # at the planet center) from camera_distance away.
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(scene.camera_vector[0], scene.camera_vector[1], scene.camera_vector[2], 
+    gluLookAt(glcanvas.camera_vector[0], glcanvas.camera_vector[1], glcanvas.camera_vector[2],
                   0.0, 0.0, 0.0,
-                  scene.camera_up[0], scene.camera_up[1], scene.camera_up[2])
+                  glcanvas.camera_up[0], glcanvas.camera_up[1], glcanvas.camera_up[2])
 
 
 def draw_scene(glcanvas):
@@ -128,7 +130,7 @@ def draw_scene(glcanvas):
 
     draw_orbits(glcanvas)
     draw_orbit_symbology(glcanvas)
-    draw_planet(glcanvas, True)
+    draw_planet(glcanvas)
     draw_info(glcanvas)
 
 
@@ -177,7 +179,7 @@ def draw_orbits(glcanvas):
         glVertex3f(*body.r)
         glEnd()
 
-    for body in glcanvas.scene.bodies:
+    for body in glcanvas.sim.bodies:
         if body.orbit_viz_mode != Body.ORBIT_VISUALISATIONS['none']:
             draw_orbit(glcanvas, body)
         if body.pos_viz_mode == Body.POSITION_VISUALISATIONS['rv']:
@@ -234,7 +236,7 @@ def draw_orbit_symbology(glcanvas):
     glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity()
 
     #Draw symbology
-    for body in glcanvas.scene.bodies:
+    for body in glcanvas.sim.bodies:
         draw_symbology(glcanvas, world_matrix, body)
 
     #Restore matrices to previous 3D projection (as we still need to draw some objects in 3D space)
@@ -276,11 +278,36 @@ def draw_planet(glcanvas, atmosphere=True):
     glDisable(GL_TEXTURE_2D)
     gluDeleteQuadric(quad)    
 
-    if atmosphere:
+    if glcanvas.sim.draw_atmosphere:
         glColor4f(0.5, 0.5, 0.8, 0.25)
         quad = gluNewQuadric()
         gluSphere(quad, EARTH_R * 1.02, 128, 128)
         gluDeleteQuadric(quad)
+
+    if glcanvas.sim.draw_mountain:
+        glBegin(GL_TRIANGLE_STRIP)
+        HEIGHT = 1E06  # 1000 km
+
+        angle = 0.05  # Subtended angle of the base of the mountain
+        glColor4f(0.8, 0.8, 0.8, 1.0)
+        glVertex3f(0.0, EARTH_R * numpy.cos(angle), EARTH_R * numpy.sin(angle))
+        glVertex3f(0.0, EARTH_R * numpy.cos(angle), -EARTH_R * numpy.sin(angle))
+        glVertex3f(0.0, EARTH_R + HEIGHT, 0.0)
+
+        glColor4f(0.6, 0.6, 0.6, 1.0)
+        glVertex3f(-EARTH_R * numpy.sin(angle * 2), EARTH_R * numpy.cos(angle * 2), 0.0)
+        glColor4f(0.4, 0.4, 0.4, 1.0)
+        glVertex3f(0.0, EARTH_R * numpy.cos(angle), EARTH_R * numpy.sin(angle))
+
+
+        #triangle 2, vertex 1
+        #triangle 2, vertex 2
+        #triangle 2, vertex 3
+        #triangle 3, vertex 1
+        #triangle 3, vertex 2
+        #triangle 3, vertex 3
+
+        glEnd()
 
     glPopAttrib()
     glDepthMask(True)
@@ -299,11 +326,11 @@ def draw_info(glcanvas):
     gluOrtho2D(0.0, glcanvas.w, 0.0, glcanvas.h);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    current_body =  glcanvas.scene.current_body()
+    current_body =  glcanvas.sim.current_body()
     glColor4f(*current_body.orbit_color) #N.B. glRasterPos fixes the currently active color so text color must be set BEFORE calling it
 
     #Orbital parameters
-    gl_print(4, 0, 'Body: %i' % glcanvas.scene.selected_body)
+    gl_print(4, 0, 'Body: %i' % glcanvas.sim.selected_body)
     gl_print(4, 1, 'a: %f m' % current_body.a)
     gl_print(4, 2, 'e: %f' % current_body.e)
     gl_print(4, 3, 'w: %f deg' % current_body.w)
@@ -315,8 +342,8 @@ def draw_info(glcanvas):
     gl_print(4, 9, 'Ar: %f m' % current_body.ra)
     gl_print(4, 10, 'Ph: %f m' % (current_body.rp - EARTH_R))
     gl_print(4, 11, 'Ah: %f m' % (current_body.ra - EARTH_R))
-    gl_print(4, 12, 't_step: %f' % glcanvas.scene.time_step)
-    gl_print(4, 13, 't: %f s' % glcanvas.scene.time)
+    gl_print(4, 12, 't_step: %f' % glcanvas.sim.time_step)
+    gl_print(4, 13, 't: %f s' % glcanvas.sim.time)
 
     #Instantaneous parameters
     xright = glcanvas.w - 200
