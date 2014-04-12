@@ -10,6 +10,7 @@ from wx.glcanvas import GLCanvas, GLContext
 import vecmath
 from body import Body, EARTH_R
 
+
 class OrbitzGLCanvas(GLCanvas):
 
     def __init__(self, parent, scene):

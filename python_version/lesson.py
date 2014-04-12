@@ -3,8 +3,10 @@ import wx.html
 
 
 class LessonsWindow(wx.Frame):
-    def __init__(self):
+    def __init__(self, scene):
         wx.Frame.__init__(self, None, title="Instructions", size=(640, 1024))
+        self.scene = scene
+
         subbox = wx.BoxSizer(wx.HORIZONTAL)
 
         button_prev = wx.Button(self, -1, 'Prev')
@@ -61,6 +63,8 @@ class LessonsWindow(wx.Frame):
 
     def OnPrev(self, evt):
         print 'OnPrev'
+        #Change scene so that there's only one, circular orbit
+        #Change scene so that the camera position is from somewhere else (don't know where)
 
     def OnNext(self, evt):
         print 'OnNext'
