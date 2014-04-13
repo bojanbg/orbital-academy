@@ -17,6 +17,7 @@ class Lesson1(Lesson):
         self.sim.bodies = []
         self.sim.draw_atmosphere = False
         self.sim.draw_mountain = True
+        self.sim.planet_transparent = False
         self.viz_window.switch_view_north()
 
     def step2(self):

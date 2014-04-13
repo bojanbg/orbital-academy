@@ -23,6 +23,7 @@ class Simulation(object):
 
         self.draw_atmosphere = True
         self.draw_mountain = False
+        self.planet_transparent = True
 
     def current_body(self):
         if self.selected_body is not None:

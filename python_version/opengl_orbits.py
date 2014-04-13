@@ -15,7 +15,7 @@ class OrbitzGLCanvas(GLCanvas):
     def __init__(self, parent, sim):
         GLCanvas.__init__(self, parent, -1, size=(1024, 1024), 
                           attribList=(wx.glcanvas.WX_GL_RGBA, wx.glcanvas.WX_GL_DOUBLEBUFFER,
-                                      wx.glcanvas.WX_GL_DEPTH_SIZE, 24, 0))
+                                      wx.glcanvas.WX_GL_DEPTH_SIZE, 24))
         self.context = GLContext(self)
         self.SetCurrent(self.context)
         self.context_initialized = False
@@ -263,9 +263,11 @@ def draw_planet(glcanvas, atmosphere=True):
 
     #We temporarily change OpenGL state as we are drawing a transparent object
     glPushAttrib(GL_ENABLE_BIT)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glDepthMask(False)
+    if glcanvas.sim.planet_transparent:
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDepthMask(False)
+
     glEnable(GL_TEXTURE_2D)
     #glBindTexture(GL_TEXTURE_2D, 0) #Should be using texture_id but for now we only have one texture
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
