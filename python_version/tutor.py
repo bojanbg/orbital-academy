@@ -94,7 +94,6 @@ class LessonsWindow(wx.Frame):
         step_method()
         self.lesson.reset_sim()
         self.html_window.SetPage(getattr(self.lesson, 'text'))
-        self.OnSimStateChange()
 
     def OnPrev(self, evt):
         if self.lesson_step > 1:

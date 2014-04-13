@@ -5,7 +5,6 @@ from body import Body, EARTH_R
 class Lesson2(Lesson):
 
     def reset_sim(self):
-        self.sim.set_defaults()
         self.viz_window.switch_view_north()
         self.sim.time_step = 5.0
         self.sim.draw_atmosphere = False
@@ -13,6 +12,12 @@ class Lesson2(Lesson):
         self.sim.planet_transparent = False
         self.viz_window.switch_view_north()
 
+    def _newtons_rock(self, speed):
+        body = Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (speed, 0.0, 0.0), 0.0, (0.5, 0.5, 0.5, 0.5))
+        body.orbit_end = 270
+        body.pos_viz_mode = Body.POSITION_VISUALISATIONS['dot']
+        body.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['orbit']
+        return body
 
     def step1(self):
         self.text = """\
@@ -43,13 +48,28 @@ class Lesson2(Lesson):
     <p>Again, click <b>Start</b> below to see what happens.</p>
 """
         self.sim.__init__(0)
-        self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (2000, 0.0, 0.0), 0.0),
-                           Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (6500, 0.0, 0.0), 0.0)]
+        self.sim.bodies = [Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (2000, 0.0, 0.0), 0.0),
+                           self._newtons_rock(1000)]
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
-        self.sim.bodies[1].orbit_end = 45
-        self.sim.bodies[1].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['orbit']
+        self.sim.time_barrier = 600.0
+
+    def step3(self):
+        self.text = """\
+    <h3><center>Projectile Motion - 3</center></h3>
+    <p>Progressively faster projectiles</p>
+
+    <p>Again, click <b>Start</b> below to see what happens.</p>
+"""
+        self.sim.__init__(0)
+        self.sim.bodies = [Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (6000, 0.0, 0.0), 0.0),
+                           self._newtons_rock(5000), self._newtons_rock(4000), self._newtons_rock(3000),
+                           self._newtons_rock(2000), self._newtons_rock(1000)]
+        self.sim.bodies[0].record_trajectory = True
+        self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
+        self.sim.selected_body = 0
+        self.sim.time_barrier = 1100
 
 
 class Demo1(Lesson):
