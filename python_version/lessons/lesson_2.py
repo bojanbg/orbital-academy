@@ -8,7 +8,6 @@ class Lesson2(Lesson):
         self.sim.set_defaults()
         self.viz_window.switch_view_north()
         self.sim.time_step = 5.0
-        self.sim.time_barrier = 530.0
         self.sim.draw_atmosphere = False
         self.sim.draw_mountain = True
         self.sim.planet_transparent = False
@@ -33,6 +32,7 @@ class Lesson2(Lesson):
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
+        self.sim.time_barrier = 530.0
 
     def step2(self):
         self.text = """\
@@ -43,10 +43,13 @@ class Lesson2(Lesson):
     <p>Again, click <b>Start</b> below to see what happens.</p>
 """
         self.sim.__init__(0)
-        self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (2000, 0.0, 0.0), 0.0)]
+        self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (2000, 0.0, 0.0), 0.0),
+                           Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (6500, 0.0, 0.0), 0.0)]
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
+        self.sim.bodies[1].orbit_end = 45
+        self.sim.bodies[1].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['orbit']
 
 
 class Demo1(Lesson):

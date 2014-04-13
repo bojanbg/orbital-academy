@@ -221,8 +221,8 @@ def draw_orbit_symbology(glcanvas):
 
         if body.orbit_viz_mode == Body.ORBIT_VISUALISATIONS['all']:
             #Draw apsides (full circle for periapsis, empty circle for apoapsis)
-            xp, yp, zp =  gluProject(body.a, 0.0, 0.0, body.modelview_matrix, glcanvas.projection_matrix)
-            xa, ya, za =  gluProject(-body.a, 0.0, 0.0, body.modelview_matrix, glcanvas.projection_matrix)
+            xp, yp, zp = gluProject(body.a, 0.0, 0.0, body.modelview_matrix, glcanvas.projection_matrix)
+            xa, ya, za = gluProject(-body.a, 0.0, 0.0, body.modelview_matrix, glcanvas.projection_matrix)
             xp = int(xp); yp = int(yp); xa = int(xa); ya = int(ya)
             quadric = gluNewQuadric()
             glColor4f(0.0, 1.0, 0.0, 1.0)

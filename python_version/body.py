@@ -21,6 +21,7 @@ class Body(object):
         self.stipple = stipple
         self.record_trajectory = record_trajectory
         self.trajectory = []
+        self.collided_time = None  # If a collision with the planet happens at any point in time, this will be set
 
         self.r0 = r
         self.r0_ = numpy.linalg.norm(self.r0)
@@ -120,6 +121,10 @@ class Body(object):
             dt = (x**2 * C + numpy.vdot(self.r0, self.v0) / SQRT_EARTH_MU * x * (1.0 - z * S) + self.r0_ * (1.0 - z * C)) / SQRT_EARTH_MU
             return (t, dt)
 
+        # Don't move object once it has collided with the surface
+        if self.collided_time and t > self.collided_time:
+            return
+
         # First we find x using Newton's method. It converges remarkably quickly.
         # For elliptical orbits (including circular), we use sqrt(mu)*(t-t0)/a as the first approximation
         # NOTE: Parabolic and hyperbolic orbits are not supported at the moment!
@@ -151,6 +156,10 @@ class Body(object):
 
         if self.record_trajectory:
             self.trajectory.append(self.r)
+
+        if numpy.linalg.norm(self.r) < EARTH_R:
+            self.v = numpy.array((0.0, 0.0, 0.0))
+            self.collided_time = t
 
     def prograde(self):
         """Returns a unit vector in the prograde direction, ie. normalize(self.v)."""
