@@ -25,4 +25,7 @@ class Simulation(object):
         self.draw_mountain = False
 
     def current_body(self):
-        return self.bodies[self.selected_body]
+        if self.selected_body:
+            return self.bodies[self.selected_body]
+        else:
+            return None

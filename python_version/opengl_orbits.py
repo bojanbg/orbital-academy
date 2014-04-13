@@ -326,32 +326,33 @@ def draw_info(glcanvas):
     gluOrtho2D(0.0, glcanvas.w, 0.0, glcanvas.h);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    current_body =  glcanvas.sim.current_body()
-    glColor4f(*current_body.orbit_color) #N.B. glRasterPos fixes the currently active color so text color must be set BEFORE calling it
+    current_body = glcanvas.sim.current_body()
+    if current_body:
+        glColor4f(*current_body.orbit_color) #N.B. glRasterPos fixes the currently active color so text color must be set BEFORE calling it
 
-    #Orbital parameters
-    gl_print(4, 0, 'Body: %i' % glcanvas.sim.selected_body)
-    gl_print(4, 1, 'a: %f m' % current_body.a)
-    gl_print(4, 2, 'e: %f' % current_body.e)
-    gl_print(4, 3, 'w: %f deg' % current_body.w)
-    gl_print(4, 4, 'i: %f deg' % current_body.i)
-    gl_print(4, 5, 'o: %f deg' % current_body.o)
-    gl_print(4, 6, 'ni: %f deg' % current_body.ni)
-    gl_print(4, 7, 'T: %f s' % current_body.T)
-    gl_print(4, 8, 'Pr: %f m' % current_body.rp)
-    gl_print(4, 9, 'Ar: %f m' % current_body.ra)
-    gl_print(4, 10, 'Ph: %f m' % (current_body.rp - EARTH_R))
-    gl_print(4, 11, 'Ah: %f m' % (current_body.ra - EARTH_R))
-    gl_print(4, 12, 't_step: %f' % glcanvas.sim.time_step)
-    gl_print(4, 13, 't: %f s' % glcanvas.sim.time)
+        #Orbital parameters
+        gl_print(4, 0, 'Body: %i' % glcanvas.sim.selected_body)
+        gl_print(4, 1, 'a: %f m' % current_body.a)
+        gl_print(4, 2, 'e: %f' % current_body.e)
+        gl_print(4, 3, 'w: %f deg' % current_body.w)
+        gl_print(4, 4, 'i: %f deg' % current_body.i)
+        gl_print(4, 5, 'o: %f deg' % current_body.o)
+        gl_print(4, 6, 'ni: %f deg' % current_body.ni)
+        gl_print(4, 7, 'T: %f s' % current_body.T)
+        gl_print(4, 8, 'Pr: %f m' % current_body.rp)
+        gl_print(4, 9, 'Ar: %f m' % current_body.ra)
+        gl_print(4, 10, 'Ph: %f m' % (current_body.rp - EARTH_R))
+        gl_print(4, 11, 'Ah: %f m' % (current_body.ra - EARTH_R))
+        gl_print(4, 12, 't_step: %f' % glcanvas.sim.time_step)
+        gl_print(4, 13, 't: %f s' % glcanvas.sim.time)
 
-    #Instantaneous parameters
-    xright = glcanvas.w - 200
-    gl_print(xright, 0, 'x: %f m' % current_body.r[0])
-    gl_print(xright, 1, 'y: %f m' % current_body.r[1])
-    gl_print(xright, 2, 'z: %f m' % current_body.r[2])
-    gl_print(xright, 3, 'r: %f m' % numpy.sqrt(numpy.vdot(current_body.r, current_body.r)))
-    gl_print(xright, 4, 'vx: %f m/s' % current_body.v[0])
-    gl_print(xright, 5, 'vy: %f m/s' % current_body.v[1])
-    gl_print(xright, 6, 'vz: %f m/s' % current_body.v[2])
-    gl_print(xright, 7, 'v: %f m/s' % numpy.sqrt(numpy.vdot(current_body.v, current_body.v)))
+        #Instantaneous parameters
+        xright = glcanvas.w - 200
+        gl_print(xright, 0, 'x: %f m' % current_body.r[0])
+        gl_print(xright, 1, 'y: %f m' % current_body.r[1])
+        gl_print(xright, 2, 'z: %f m' % current_body.r[2])
+        gl_print(xright, 3, 'r: %f m' % numpy.sqrt(numpy.vdot(current_body.r, current_body.r)))
+        gl_print(xright, 4, 'vx: %f m/s' % current_body.v[0])
+        gl_print(xright, 5, 'vy: %f m/s' % current_body.v[1])
+        gl_print(xright, 6, 'vz: %f m/s' % current_body.v[2])
+        gl_print(xright, 7, 'v: %f m/s' % numpy.sqrt(numpy.vdot(current_body.v, current_body.v)))
