@@ -94,6 +94,7 @@ class LessonsWindow(wx.Frame):
         step_method()
         self.lesson.reset_sim()
         self.html_window.SetPage(getattr(self.lesson, 'text'))
+        self.OnSimStateChange()
 
     def OnPrev(self, evt):
         if self.lesson_step > 1:
@@ -134,8 +135,9 @@ class LessonsWindow(wx.Frame):
         self.Destroy()
 
     def OnSimStateChange(self):
-        print self.sim.state
-        if self.sim.state == 'running':
+        if self.sim.state == 'pre-run':
+            self.button_start_pause.SetLabel('Start')
+        elif self.sim.state == 'running':
             self.button_start_pause.SetLabel('Pause')
         elif self.sim.state == 'paused':
             self.button_start_pause.SetLabel('Resume')
