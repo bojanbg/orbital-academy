@@ -15,7 +15,7 @@ class OrbitzGLCanvas(GLCanvas):
     def __init__(self, parent, sim):
         GLCanvas.__init__(self, parent, -1, size=(1024, 1024), 
                           attribList=(wx.glcanvas.WX_GL_RGBA, wx.glcanvas.WX_GL_DOUBLEBUFFER,
-                                      0, wx.glcanvas.WX_GL_DEPTH_SIZE, 32, 0))
+                                      wx.glcanvas.WX_GL_DEPTH_SIZE, 24, 0))
         self.context = GLContext(self)
         self.SetCurrent(self.context)
         self.context_initialized = False
@@ -276,7 +276,7 @@ def draw_planet(glcanvas, atmosphere=True):
     gluQuadricTexture(quad, GLU_TRUE)
     gluSphere(quad, EARTH_R, 128, 128)
     glDisable(GL_TEXTURE_2D)
-    gluDeleteQuadric(quad)    
+    gluDeleteQuadric(quad)
 
     if glcanvas.sim.draw_atmosphere:
         glColor4f(0.5, 0.5, 0.8, 0.25)
@@ -298,15 +298,6 @@ def draw_planet(glcanvas, atmosphere=True):
         glVertex3f(-EARTH_R * numpy.sin(angle * 2), EARTH_R * numpy.cos(angle * 2), 0.0)
         glColor4f(0.4, 0.4, 0.4, 1.0)
         glVertex3f(0.0, EARTH_R * numpy.cos(angle), EARTH_R * numpy.sin(angle))
-
-
-        #triangle 2, vertex 1
-        #triangle 2, vertex 2
-        #triangle 2, vertex 3
-        #triangle 3, vertex 1
-        #triangle 3, vertex 2
-        #triangle 3, vertex 3
-
         glEnd()
 
     glPopAttrib()

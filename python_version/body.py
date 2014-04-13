@@ -102,7 +102,7 @@ class Body(object):
         self.calc_orbital_params()
 
     def calc_state_vectors(self, t):
-        # Based on Keplerian orbital paramters calculates state vectors at time t0 + t
+        # Based on Keplerian orbital parameters calculates state vectors at time t0 + t
         # Algorithm from "Fundamentals of astrodynamics" by Roger R. Bate, Donald D. Mueller and Jerry E. White
 
         def evaluate_t_dt(x):
