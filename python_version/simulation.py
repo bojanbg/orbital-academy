@@ -8,9 +8,9 @@ class Simulation(object):
     def __init__(self, num_random_objs):
         self.bodies = []
         self.selected_body = 0
-        # For circular orbits, v = sqrt(gamma/r)
-        self.bodies.append(Body((7.0E6, 0.0, 0.0), (0.0, numpy.sqrt(EARTH_MU / 7.0E6), 0.0), 0.0, (0.0, 1.0, 1.0, 1.0)))
-        self.bodies.append(Body((-7.5E6, 0.0, 0.0), (0.0, -numpy.sqrt(EARTH_MU / 7.5E6), 0.0), 0.0))
+
+        self.bodies.append(Body.generate_circular_equatorial_orbit(6.0E5, (0.0, 1.0, 1.0, 1.0)))
+        self.bodies.append(Body.generate_circular_equatorial_orbit(1.2E6))
 
         for x in xrange(num_random_objs):
             self.bodies.append(Body.generate_random_orbit())
@@ -21,6 +21,9 @@ class Simulation(object):
         self.time = 0.0
         self.time_step = 1.0
 
+        self.default_view()
+
+    def default_view(self):
         self.draw_atmosphere = True
         self.draw_mountain = False
         self.planet_transparent = True

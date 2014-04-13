@@ -61,7 +61,7 @@ class LessonsWindow(wx.Frame):
         <li><a href="Lesson1">Orbital Motion</a></li>
         <li>Orbital Elements - Equatorial Orbits</li>
         <li>Circular Orbits</li>
-        <li>Hoffman Transfers</li>
+        <li><a href="Lesson5">Hohman Transfers</a></li>
         <li>Six Orbital Elements</li>
         <li>Plane Changes</li>
         <li>Orbital Intercept</li>

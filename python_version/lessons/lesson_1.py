@@ -1,5 +1,5 @@
 from lesson import Lesson
-from simulation import Simulation
+
 
 class Lesson1(Lesson):
 

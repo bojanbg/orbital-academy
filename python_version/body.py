@@ -164,6 +164,16 @@ class Body(object):
         return -self.orbit_normal()
 
     @staticmethod
+    def generate_circular_equatorial_orbit(alt, orbit_color=(1.0, 1.0, 0.0, 1.0)):
+        # Generates a circular equatorial orbit at the given altitude.
+        # For circular orbits, v = sqrt(gamma/r)
+        r = (EARTH_R + alt, 0.0, 0.0)
+        r_ = numpy.linalg.norm(r)
+        v = (0.0, numpy.sqrt(EARTH_MU / r_), 0.0)
+        body = Body(r, v, 0.0, orbit_color)
+        return Body(body.r, body.v, 0.0, orbit_color)
+
+    @staticmethod
     def generate_random_orbit():
         import random
         rho = random.uniform(EARTH_R + 200.0, 2 * EARTH_R + 200)

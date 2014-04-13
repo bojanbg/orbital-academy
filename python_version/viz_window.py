@@ -102,11 +102,16 @@ class VizWindow(wx.Frame):
         self.timer = wx.Timer(self, self.ID_Timer)
         self.Bind(wx.EVT_TIMER, self.OnTimer, id=self.ID_Timer)
 
-    def switch_view_north(self):
+    def set_camera_pos(self, vector, up, right):
         """Switches the view to a North top-down view from the default distance."""
-        self.gl_canvas.camera_up = (0.0, 1.0, 0.0); self.gl_canvas.camera_right = (1.0, 0.0, 0.0)
-        self.gl_canvas.camera_vector = (0.0, 0.0, 6 * EARTH_R)
+        self.gl_canvas.camera_vector = vector
+        self.gl_canvas.camera_up = up
+        self.gl_canvas.camera_right = right
         self.gl_canvas.Refresh()
+
+    def switch_view_north(self, earth_radii_distance=6.0):
+        """Switches the view to a North top-down view from the default distance."""
+        self.set_camera_pos((0.0, 0.0, earth_radii_distance * EARTH_R), (0.0, 1.0, 0.0), (1.0, 0.0, 0.0))
 
 
     def OnBodyChange(self, evt):
