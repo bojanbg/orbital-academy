@@ -21,7 +21,9 @@ class Lesson1(Lesson):
         self.viz_window.switch_view_north()
 
     def step2(self):
-        pass
+        self.text = """\
+    <p>And it's step 2!</p>
+"""
 
 
 class Demo1(Lesson):

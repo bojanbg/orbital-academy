@@ -23,6 +23,9 @@ class LessonsWindow(wx.Frame):
         self.sim = sim
         self.viz_window = viz_window
 
+        self.lesson = None
+        self.lesson_step = None
+
         subbox = wx.BoxSizer(wx.HORIZONTAL)
 
         button_prev = wx.Button(self, -1, 'Prev')
@@ -82,16 +85,27 @@ class LessonsWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     def OnLinkClicked(self, linkinfo):
-        lesson = getattr(lessons, linkinfo.Href)(self.sim, self.viz_window)
-        step = getattr(lesson, 'step1')
-        step()
-        self.html_window.SetPage(getattr(lesson, 'text'))
+        self.lesson = getattr(lessons, linkinfo.Href)(self.sim, self.viz_window)
+        self.lesson_step = 1
+        step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
+        step_method()
+        self.html_window.SetPage(getattr(self.lesson, 'text'))
 
     def OnPrev(self, evt):
-        pass
+        if self.lesson_step > 1:
+            self.lesson_step -= 1
+        step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
+        step_method()
+        self.html_window.SetPage(getattr(self.lesson, 'text'))
 
     def OnNext(self, evt):
-        pass
+        try:
+            step_method = getattr(self.lesson, 'step%d' % (self.lesson_step + 1))
+            self.lesson_step += 1
+            step_method()
+            self.html_window.SetPage(getattr(self.lesson, 'text'))
+        except AttributeError:
+            pass
 
     def OnRunPause(self, evt):
         pass
