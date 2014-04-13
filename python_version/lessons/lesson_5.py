@@ -15,7 +15,9 @@ class Lesson5(Lesson):
         self.sim.__init__(0)
         self.sim.bodies = [Body.generate_circular_equatorial_orbit(1.0E6, (0.0, 1.0, 1.0, 1.0)),
                            Body.generate_circular_equatorial_orbit(1.0E7)]
-        self.reset_view()
+
+        self.reset_sim()
+        self.sim.time_barrier = 1000.0
         self.viz_window.switch_view_north(12.0)
 
     def step2(self):

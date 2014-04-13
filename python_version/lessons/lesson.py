@@ -5,6 +5,6 @@ class Lesson(object):
         self.viz_window = viz_window
         self.text = None
 
-    def reset_view(self):
-        self.sim.default_view
+    def reset_sim(self):
+        self.sim.set_defaults()
         self.viz_window.switch_view_north()

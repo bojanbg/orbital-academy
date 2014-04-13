@@ -185,7 +185,7 @@ class VizWindow(wx.Frame):
             assert 'Unknown event ID!'
 
     def OnTimer(self, evt):
-        self.sim.time += 10.0
+        self.sim.step_time()
         for body in self.sim.bodies:
             body.calc_state_vectors(self.sim.time)
         self.gl_canvas.Refresh()

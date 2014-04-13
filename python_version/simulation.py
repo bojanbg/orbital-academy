@@ -1,5 +1,3 @@
-import numpy
-
 from body import Body, EARTH_MU
 
 
@@ -18,12 +16,13 @@ class Simulation(object):
         self.pos_viz_mode = Body.POSITION_VISUALISATIONS['symbol']
         self.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['all']
 
+        self.set_defaults()
+
+    def set_defaults(self):
         self.time = 0.0
-        self.time_step = 1.0
+        self.time_step = 10.0
+        self.time_barrier = 1.0E15
 
-        self.default_view()
-
-    def default_view(self):
         self.draw_atmosphere = True
         self.draw_mountain = False
         self.planet_transparent = True
@@ -33,3 +32,7 @@ class Simulation(object):
             return self.bodies[self.selected_body]
         else:
             return None
+
+    def step_time(self):
+        if self.time < self.time_barrier:
+            self.time += self.time_step
