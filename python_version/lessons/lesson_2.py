@@ -6,7 +6,6 @@ class Lesson2(Lesson):
 
     def reset_sim(self):
         self.viz_window.switch_view_north()
-        self.sim.time_step = 5.0
         self.sim.draw_atmosphere = False
         self.sim.draw_mountain = True
         self.sim.planet_transparent = False
@@ -37,6 +36,7 @@ class Lesson2(Lesson):
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
+        self.sim.time_step = 5.0
         self.sim.time_barrier = 530.0
 
     def step2(self):
@@ -58,18 +58,41 @@ class Lesson2(Lesson):
     def step3(self):
         self.text = """\
     <h3><center>Projectile Motion - 3</center></h3>
-    <p>Progressively faster projectiles</p>
+    <h4>Progressively faster projectiles</h4>
 
-    <p>Again, click <b>Start</b> below to see what happens.</p>
+    <p>Here we see the trajectories of rocks thrown with a horizontal velocity of 1 to 6 km/s. Click <b>Start</b> to
+    see what will happen with a one thrown at 7 km/s</p>
 """
         self.sim.__init__(0)
-        self.sim.bodies = [Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (6000, 0.0, 0.0), 0.0),
-                           self._newtons_rock(5000), self._newtons_rock(4000), self._newtons_rock(3000),
-                           self._newtons_rock(2000), self._newtons_rock(1000)]
+        self.sim.bodies = [Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (7000, 0.0, 0.0), 0.0),
+                           self._newtons_rock(6000), self._newtons_rock(5000), self._newtons_rock(4000),
+                           self._newtons_rock(3000), self._newtons_rock(2000), self._newtons_rock(1000)]
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
-        self.sim.time_barrier = 1100
+        self.sim.time_barrier = 2200
+
+    def step4(self):
+        self.text = """\
+    <h3><center>Projectile Motion - 4</center></h3>
+    <h4>When you fall and miss the Earth</h4>
+
+    <p>One of the rocks previously almost went around the Earth. Finally, let's look at what happens when we
+    throw a projectile even faster.</p>
+
+    <p>Well, it travels so fast that it never hits the Earth! Note that the projectile is constantly falling - it's
+    just that the Earth's surface is "falling" away from it more quickly. We say that the projectile is in free fall,
+    and the trajectory that it draws is called an orbit.</p>
+
+    <p>Also note how our projectile (rock) returns to the <b>exact</b> same place that it started of. If you
+    look closer you will notice that it has exactly the same velocity, too. That means it will forever go around
+    the Earth!</p>
+"""
+        self.sim.__init__(0)
+        self.sim.bodies = [Body((10.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 10.0),  (7200, 0.0, 0.0), 0.0)]
+        # self.sim.bodies[0].record_trajectory = True
+        # self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
+        self.sim.selected_body = 0
 
 
 class Demo1(Lesson):

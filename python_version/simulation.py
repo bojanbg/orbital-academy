@@ -1,4 +1,4 @@
-from body import Body, EARTH_MU
+from body import Body
 
 
 class Simulation(object):
@@ -45,7 +45,6 @@ class Simulation(object):
             self.state = 'paused'
 
     def step_time(self):
-        print self.time_barrier
         if self.state != 'finished':
             if self.state == 'running' and self.time < self.time_barrier:
                 self.time += self.time_step
