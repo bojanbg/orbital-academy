@@ -36,6 +36,7 @@ class Body(object):
 
     def clone(self):
         new_body = Body(self.r, self.v, self.t0, self.orbit_color, self.stipple, self.record_trajectory)
+        new_body.pos_viz_mode = self.pos_viz_mode
         self.pos_viz_mode = Body.POSITION_VISUALISATIONS['dot']
         self.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['orbit']
         return new_body
