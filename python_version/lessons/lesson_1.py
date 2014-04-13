@@ -1,5 +1,5 @@
 from lesson import Lesson
-
+from simulation import Simulation
 
 class Lesson1(Lesson):
 
@@ -22,3 +22,14 @@ class Lesson1(Lesson):
 
     def step2(self):
         pass
+
+
+class Demo1(Lesson):
+    # As a hack demo is coded as a lesson
+
+    def step1(self):
+        self.text = """\
+    <h3><center>Demo - 100 orbits at once</center></h3>
+    """
+        self.sim.__init__(100)
+        self.viz_window.Refresh()

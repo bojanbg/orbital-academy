@@ -10,7 +10,7 @@ if __name__ == '__main__':
     class OrbitzApp(wx.App):
 
         def OnInit(self):
-            simulation = Simulation(4)
+            simulation = Simulation(5)
             visualization_window = VizWindow(simulation)
             visualization_window.Show(True)
             self.SetTopWindow(visualization_window)

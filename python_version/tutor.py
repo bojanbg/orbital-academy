@@ -64,6 +64,10 @@ class LessonsWindow(wx.Frame):
         <li>Orbital Intercept</li>
         <li>Orbital Rendezvous</li>
     </ol>
+    <p>Demos</p>
+    <ul>
+        <li><a href="Demo1">A lot of objects</a></li>
+    </ul>
 </body>
 </html>
 """
