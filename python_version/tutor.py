@@ -1,7 +1,6 @@
 import wx
 import wx.html
 
-#from lessons import *  # We use this variant of import because there can be many lessons
 import lessons
 
 class TutorHTMLWindow(wx.html.HtmlWindow):
@@ -52,11 +51,12 @@ class LessonsWindow(wx.Frame):
 </html>
 """
 
-    def __init__(self, parent, sim, viz_window):
+    def __init__(self, parent, sim, viz_window, cmd_window):
         wx.Frame.__init__(self, None, title="Instructions", size=(640, 800))
         self.parent = parent
         self.sim = sim
         self.viz_window = viz_window
+        self.cmd_window = cmd_window
         self.viz_window.sim_state_change_callback = self  # Set up callback for sim state changes
 
         self.lesson = None
@@ -130,7 +130,10 @@ class LessonsWindow(wx.Frame):
             self.viz_window.OnStartSim(None)
 
     def OnClose(self, evt):
-        self.viz_window.OnClose(None)
+        if self.viz_window:
+            self.viz_window.OnClose(None)
+        if self.cmd_window:
+            self.cmd_window.OnClose(None)
         self.Destroy()
 
     def OnSimStateChange(self):
