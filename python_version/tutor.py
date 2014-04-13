@@ -17,31 +17,8 @@ class TutorHTMLWindow(wx.html.HtmlWindow):
 
 
 class LessonsWindow(wx.Frame):
-    def __init__(self, parent, sim, viz_window):
-        wx.Frame.__init__(self, None, title="Instructions", size=(640, 1024))
-        self.parent = parent
-        self.sim = sim
-        self.viz_window = viz_window
 
-        self.lesson = None
-        self.lesson_step = None
-
-        subbox = wx.BoxSizer(wx.HORIZONTAL)
-
-        button_prev = wx.Button(self, -1, 'Prev')
-        self.Bind(wx.EVT_BUTTON, self.OnPrev, button_prev)
-        subbox.Add(button_prev, 1, wx.GROW | wx.ALL, 2)
-
-        button_play_pause = wx.Button(self, -1, 'Run/Puase')
-        self.Bind(wx.EVT_BUTTON, self.OnRunPause, button_play_pause)
-        subbox.Add(button_play_pause, 1, wx.GROW | wx.ALL, 2)
-
-        button_next = wx.Button(self, -1, 'Next')
-        self.Bind(wx.EVT_BUTTON, self.OnNext, button_next)
-        subbox.Add(button_next, 1, wx.GROW | wx.ALL, 2)
-
-        self.html_window = TutorHTMLWindow(self)
-        contents = """\
+    INITIAL_CONTENTS = """\
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,7 +51,32 @@ class LessonsWindow(wx.Frame):
 </body>
 </html>
 """
-        self.html_window.SetPage(contents)
+
+    def __init__(self, parent, sim, viz_window):
+        wx.Frame.__init__(self, None, title="Instructions", size=(640, 1024))
+        self.parent = parent
+        self.sim = sim
+        self.viz_window = viz_window
+
+        self.lesson = None
+        self.lesson_step = None
+
+        subbox = wx.BoxSizer(wx.HORIZONTAL)
+
+        button_prev = wx.Button(self, -1, 'Prev')
+        self.Bind(wx.EVT_BUTTON, self.OnPrev, button_prev)
+        subbox.Add(button_prev, 1, wx.GROW | wx.ALL, 2)
+
+        button_play_pause = wx.Button(self, -1, 'Run/Puase')
+        self.Bind(wx.EVT_BUTTON, self.OnRunPause, button_play_pause)
+        subbox.Add(button_play_pause, 1, wx.GROW | wx.ALL, 2)
+
+        button_next = wx.Button(self, -1, 'Next')
+        self.Bind(wx.EVT_BUTTON, self.OnNext, button_next)
+        subbox.Add(button_next, 1, wx.GROW | wx.ALL, 2)
+
+        self.html_window = TutorHTMLWindow(self)
+        self.html_window.SetPage(self.INITIAL_CONTENTS)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.html_window, 1, wx.EXPAND)
@@ -94,9 +96,11 @@ class LessonsWindow(wx.Frame):
     def OnPrev(self, evt):
         if self.lesson_step > 1:
             self.lesson_step -= 1
-        step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
-        step_method()
-        self.html_window.SetPage(getattr(self.lesson, 'text'))
+            step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
+            step_method()
+            self.html_window.SetPage(getattr(self.lesson, 'text'))
+        else:
+            self.html_window.SetPage(self.INITIAL_CONTENTS)
 
     def OnNext(self, evt):
         try:
@@ -111,4 +115,5 @@ class LessonsWindow(wx.Frame):
         pass
 
     def OnClose(self, evt):
+        self.viz_window.OnClose(None)
         self.Destroy()

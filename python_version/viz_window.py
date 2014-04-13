@@ -27,9 +27,6 @@ class VizWindow(wx.Frame):
             self.Bind(wx.EVT_MENU, event_handler, id=id_)
 
     def _create_menu(self):
-        file_menu = wx.Menu()
-        file_menu.Append(self.ID_Exit, 'E&xit\tCtrl+Q')
-
         body_menu = wx.Menu()
         body_menu.Append(self.ID_First_Body, '&First\tHome')
         body_menu.Append(self.ID_Next_Body, '&Previous\tPgDn')
@@ -70,7 +67,6 @@ class VizWindow(wx.Frame):
         sim_menu.Append(self.ID_Pause_Sim, '&Pause\tPause')
 
         menubar = wx.MenuBar()
-        menubar.Append(file_menu, '&File')
         menubar.Append(body_menu, '&Body')
         menubar.Append(viz_menu, '&Visualization')
         menubar.Append(sim_menu, '&Simulation')
@@ -78,7 +74,8 @@ class VizWindow(wx.Frame):
         return menubar
 
     def __init__(self, sim):
-        wx.Frame.__init__(self, None, title="Orbital Academy v0.1", size=(1024, 1024))
+        wx.Frame.__init__(self, None, title="Orbital Academy v0.1", size=(1024, 1024),
+                          style=wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION)
         self.sim = sim
         self.main_panel = wx.Panel(self)
         self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.sim)
@@ -88,8 +85,6 @@ class VizWindow(wx.Frame):
         sizer.Add(self.gl_canvas, 1, wx.EXPAND)
         self.main_panel.SetSizer(sizer)
 
-        self.Bind(wx.EVT_CLOSE, self.OnClose)
-
         self.menu = self._create_menu(); self.SetMenuBar(self.menu)
         self.bind_multiple_ids(self.OnBodyChange, [self.ID_First_Body, self.ID_Last_Body, self.ID_Next_Body, self.ID_Prev_Body])
         self.bind_multiple_ids(self.OnBodyPos, [self.ID_Body_Pos_Symbol, self.ID_Body_Pos_RV, self.ID_Body_Pos_Point, self.ID_Body_Pos_Cycle])
@@ -97,7 +92,8 @@ class VizWindow(wx.Frame):
         self.bind_multiple_ids(self.OnBodiesPos, [self.ID_Bodies_Pos_Symbol, self.ID_Bodies_Pos_RV, self.ID_Bodies_Pos_Point, self.ID_Bodies_Pos_Cycle])
         self.bind_multiple_ids(self.OnBodiesOrbit, [self.ID_Bodies_Orbit_Symbols, self.ID_Bodies_Orbit_Only, self.ID_Bodies_No_Orbit, self.ID_Bodies_Orbit_Cycle])
         self.bind_multiple_ids(self.OnToggleSim, [self.ID_Start_Sim, self.ID_Pause_Sim])
-        self.Bind(wx.EVT_MENU, self.OnExit, id=self.ID_Exit)
+
+        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
         self.timer = wx.Timer(self, self.ID_Timer)
         self.Bind(wx.EVT_TIMER, self.OnTimer, id=self.ID_Timer)
@@ -190,9 +186,10 @@ class VizWindow(wx.Frame):
             body.calc_state_vectors(self.sim.time)
         self.gl_canvas.Refresh()
 
+    def OnCloseWindow(self, evt):
+        # Don't let user close this window
+        pass
+
     def OnClose(self, evt):
         self.timer.Stop()
         self.Destroy()
-
-    def OnExit(self, evt):
-        self.Close(True)
