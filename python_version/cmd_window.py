@@ -20,13 +20,35 @@ class CommandWindow(wx.Frame):
 
         self.SetSizer(sizer)
 
-        # self.Bind(wx.EVT_CLOSE, self.OnClose)
-
     def process_command(self, line):
-        print line
+        # Execute line in the context of the selected object
+
+        def wait(t):
+            self.sim.forward_time(self.sim.time + t)
+
+        def at(t):
+            self.sim.forward_time(t)
+
+        def prograde():
+            return self.sim.current_body().prograde()
+
+        def retrograde():
+            return self.sim.current_body().retrograde()
+
+        def normal():
+            return self.sim.current_body().orbit_normal()
+
+        def antinormal():
+            return self.sim.current_body().orbit_antinormal()
+
+        def dv(dv):
+            self.sim.current_body().apply_dv(dv, self.sim.time)
+
+        eval(line)  # , globals, locals
+        self.viz_window.Refresh()
 
     def OnExecute(self, event):
-        self.command_box.SetEditable(False)
+        # self.command_box.SetEditable(False)
         for line in self.command_box.GetValue().split('\n'):
             self.process_command(line)
 

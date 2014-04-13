@@ -46,6 +46,7 @@ class LessonsWindow(wx.Frame):
     <p>Demos</p>
     <ul>
         <li><a href="Demo1">A lot of objects</a></li>
+        <li><a href="Demo2">Command lists</a></li>
     </ul>
 </body>
 </html>

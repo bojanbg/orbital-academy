@@ -12,7 +12,7 @@ class Simulation(object):
             self.selected_body = 0
             self.bodies.append(Body.generate_circular_equatorial_orbit(6.0E5, (0.0, 1.0, 1.0, 1.0)))
             self.bodies.append(Body.generate_circular_equatorial_orbit(1.2E6))
-            for x in xrange(num_random_objs):
+            for x in xrange(num_random_objs - 2):
                 self.bodies.append(Body.generate_random_orbit())
 
         self.pos_viz_mode = Body.POSITION_VISUALISATIONS['symbol']
@@ -50,3 +50,8 @@ class Simulation(object):
                 self.time += self.time_step
             else:
                 self.state = 'finished'
+
+    def forward_time(self, t):
+        self.time = t
+        for body in self.bodies:
+            body.calc_state_vectors(t)

@@ -101,7 +101,6 @@ class Body(object):
         self.r0 = self.r
         self.r0_ = numpy.linalg.norm(self.r0)
         self.t0 = t
-        self.a = self.calc_a()
         self.calc_orbital_params()
 
     def calc_state_vectors(self, t):

@@ -104,3 +104,46 @@ class Demo1(Lesson):
     """
         self.sim.__init__(100)
         self.viz_window.Refresh()
+
+
+class Demo2(Lesson):
+    # As a hack demo is coded as a lesson
+
+    def reset_sim(self):
+        self.viz_window.switch_view_north(12.0)
+        self.sim.selected_body = 0
+        self.sim.time_step = 1.0
+
+
+    def step1(self):
+        self.text = """\
+    <h3><center>Command Lists</center></h3>
+    <p>Demos the use of command lists to perform complicated oribtal manouvers.</p>
+
+    <p>Available commands are (one per line):</p>
+    <ul>
+        <li>wait(t) - waits for <em>t<em> seconds</li>
+        <li>at(t) - waits until time <em>t<em></li>
+        <li>prograde() - returns <em>prograde<em> unit vector</li>
+        <li>retrograde() - returns <em>retrograde<em> unit vector</li>
+        <li>normal() - returns <em>orbit-normal<em> unit vector</li>
+        <li>antinormal() - returns <em>orbit-antinormal<em> unit vector</li>
+        <li>dv(dv) - applies <em>dv<em> change of velocity</li>
+    </ul>
+    <p>An example command list:</p>
+    <pre>
+    wait(10)  # wait 10 seconds
+    dv(prograde() * 100)  # prograde burn, 100 m/s
+    at(100)  # wait until time=100 seconds
+    dv(prograde() * 200)  # prograde burn, 200 m/s
+    </pre>
+"""
+        self.sim.__init__(0)
+        self.sim.bodies = [Body.generate_circular_equatorial_orbit(1.0E6, (0.0, 1.0, 1.0, 1.0)),
+                           Body.generate_circular_equatorial_orbit(1.0E7)]
+
+        self.sim.bodies[0].pos_viz_mode = Body.POSITION_VISUALISATIONS['rv']
+        self.sim.bodies[1].pos_viz_mode = Body.POSITION_VISUALISATIONS['rv']
+
+        self.reset_sim()
+        self.viz_window.switch_view_north(12.0)
