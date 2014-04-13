@@ -174,7 +174,7 @@ class VizWindow(wx.Frame):
             self.menu.Enable(self.ID_Start_Sim, False)
             self.menu.Enable(self.ID_Pause_Sim, True)
             self.timer.Start(40)
-        if old_sim_state != self.sim.state:
+        if old_sim_state != self.sim.state and self.sim_state_change_callback:
             self.sim_state_change_callback.OnSimStateChange()
 
     def OnPauseSim(self, evt):
@@ -184,7 +184,7 @@ class VizWindow(wx.Frame):
             self.menu.Enable(self.ID_Pause_Sim, False)
             self.menu.Enable(self.ID_Start_Sim, True)
             self.timer.Stop()
-        if old_sim_state != self.sim.state:
+        if old_sim_state != self.sim.state and self.sim_state_change_callback:
             self.sim_state_change_callback.OnSimStateChange()
 
     def OnTimer(self, evt):
@@ -194,7 +194,7 @@ class VizWindow(wx.Frame):
             for body in self.sim.bodies:
                 body.calc_state_vectors(self.sim.time)
         self.gl_canvas.Refresh()
-        if old_sim_state != self.sim.state:
+        if old_sim_state != self.sim.state and self.sim_state_change_callback:
             self.sim_state_change_callback.OnSimStateChange()
 
     def OnCloseWindow(self, evt):

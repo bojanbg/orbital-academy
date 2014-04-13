@@ -4,6 +4,9 @@ from body import Body
 
 class Lesson5(Lesson):
 
+    def reset_sim(self):
+        self.viz_window.switch_view_north(12.0)
+
     def step1(self):
         self.text = """\
     <h3><center>Hohman Transfers</center></h3>
@@ -17,7 +20,6 @@ class Lesson5(Lesson):
                            Body.generate_circular_equatorial_orbit(1.0E7)]
 
         self.reset_sim()
-        self.sim.time_barrier = 1000.0
         self.viz_window.switch_view_north(12.0)
 
     def step2(self):
