@@ -42,6 +42,12 @@ class CommandWindow(wx.Frame):
             return self.sim.current_body().orbit_antinormal()
 
         def dv(dv):
+            def darken(color):
+                return (color[0] * 0.5, color[1] * 0.5, color[2] * 0.5, color[3] * 0.5)
+            self.sim.bodies.append(self.sim.current_body().clone())
+            for body in self.sim.bodies[1:-1]:
+                body.orbit_color = darken(body.orbit_color)
+            self.sim.selected_body += 1
             self.sim.current_body().apply_dv(dv, self.sim.time)
 
         eval(line)  # , globals, locals

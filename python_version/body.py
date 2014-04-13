@@ -34,6 +34,12 @@ class Body(object):
         # For drawing partial orbits, these would change to the angles required
         self.orbit_start, self.orbit_end = 0.0, 360.0
 
+    def clone(self):
+        new_body = Body(self.r, self.v, self.t0, self.orbit_color, self.stipple, self.record_trajectory)
+        new_body.pos_viz_mode = Body.POSITION_VISUALISATIONS['dot']
+        new_body.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['orbit']
+        return new_body
+
     def calc_orbital_params(self):
         #Calculates Keplerian orbital parameters based on the state vectors
         #This method should be called after each change to velocity vector

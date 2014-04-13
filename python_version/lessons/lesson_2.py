@@ -111,8 +111,8 @@ class Demo2(Lesson):
 
     def reset_sim(self):
         self.viz_window.switch_view_north(12.0)
-        self.sim.selected_body = 0
-        self.sim.time_step = 1.0
+        self.sim.selected_body = 1
+        self.sim.time_step = 2.0
 
 
     def step1(self):
@@ -139,8 +139,8 @@ class Demo2(Lesson):
     </pre>
 """
         self.sim.__init__(0)
-        self.sim.bodies = [Body.generate_circular_equatorial_orbit(1.0E6, (0.0, 1.0, 1.0, 1.0)),
-                           Body.generate_circular_equatorial_orbit(1.0E7)]
+        self.sim.bodies = [Body.generate_circular_equatorial_orbit(1.0E7),
+                           Body.generate_circular_equatorial_orbit(1.0E6, (0.0, 1.0, 1.0, 1.0))]
 
         self.sim.bodies[0].pos_viz_mode = Body.POSITION_VISUALISATIONS['rv']
         self.sim.bodies[1].pos_viz_mode = Body.POSITION_VISUALISATIONS['rv']
