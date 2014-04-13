@@ -91,8 +91,8 @@ class VizWindow(wx.Frame):
         self.bind_multiple_ids(self.OnBodyOrbit, [self.ID_Body_Orbit_Symbols, self.ID_Body_Orbit_Only, self.ID_Body_No_Orbit, self.ID_Body_Orbit_Cycle])
         self.bind_multiple_ids(self.OnBodiesPos, [self.ID_Bodies_Pos_Symbol, self.ID_Bodies_Pos_RV, self.ID_Bodies_Pos_Point, self.ID_Bodies_Pos_Cycle])
         self.bind_multiple_ids(self.OnBodiesOrbit, [self.ID_Bodies_Orbit_Symbols, self.ID_Bodies_Orbit_Only, self.ID_Bodies_No_Orbit, self.ID_Bodies_Orbit_Cycle])
-        self.bind_multiple_ids(self.OnToggleSim, [self.ID_Start_Sim, self.ID_Pause_Sim])
-
+        self.Bind(wx.EVT_MENU, self.OnStartSim, id=self.ID_Start_Sim)
+        self.Bind(wx.EVT_MENU, self.OnPauseSim, id=self.ID_Pause_Sim)
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
         self.timer = wx.Timer(self, self.ID_Timer)
@@ -108,7 +108,6 @@ class VizWindow(wx.Frame):
     def switch_view_north(self, earth_radii_distance=6.0):
         """Switches the view to a North top-down view from the default distance."""
         self.set_camera_pos((0.0, 0.0, earth_radii_distance * EARTH_R), (0.0, 1.0, 0.0), (1.0, 0.0, 0.0))
-
 
     def OnBodyChange(self, evt):
         evtid = evt.GetId()
@@ -167,18 +166,17 @@ class VizWindow(wx.Frame):
             body.orbit_viz_mode = self.sim.orbit_viz_mode
         self.gl_canvas.Refresh()
 
-    def OnToggleSim(self, evt):
-        evtid = evt.GetId()
-        if evtid == self.ID_Start_Sim:
-            self.menu.Enable(self.ID_Start_Sim, False)
-            self.menu.Enable(self.ID_Pause_Sim, True)
-            self.timer.Start(40)
-        elif evtid == self.ID_Pause_Sim:
-            self.menu.Enable(self.ID_Pause_Sim, False)
-            self.menu.Enable(self.ID_Start_Sim, True)
-            self.timer.Stop()
-        else:
-            assert 'Unknown event ID!'
+    def OnStartSim(self, evt):
+        self.menu.Enable(self.ID_Start_Sim, False)
+        self.menu.Enable(self.ID_Pause_Sim, True)
+        self.timer.Start(40)
+        self.sim.running = True
+
+    def OnPauseSim(self, evt):
+        self.menu.Enable(self.ID_Pause_Sim, False)
+        self.menu.Enable(self.ID_Start_Sim, True)
+        self.timer.Stop()
+        self.sim.running = False
 
     def OnTimer(self, evt):
         self.sim.step_time()

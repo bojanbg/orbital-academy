@@ -24,6 +24,7 @@ class Simulation(object):
         self.time = 0.0
         self.time_step = 10.0
         self.time_barrier = 1.0E15
+        self.running = False
 
         self.draw_atmosphere = True
         self.draw_mountain = False
@@ -36,5 +37,5 @@ class Simulation(object):
             return None
 
     def step_time(self):
-        if self.time < self.time_barrier:
+        if self.running and self.time < self.time_barrier:
             self.time += self.time_step

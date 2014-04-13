@@ -112,7 +112,10 @@ class LessonsWindow(wx.Frame):
             pass
 
     def OnRunPause(self, evt):
-        pass
+        if self.sim.running:
+            self.viz_window.OnPauseSim(None)
+        else:
+            self.viz_window.OnStartSim(None)
 
     def OnClose(self, evt):
         self.viz_window.OnClose(None)
