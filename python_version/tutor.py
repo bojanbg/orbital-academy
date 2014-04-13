@@ -1,8 +1,8 @@
 import wx
 import wx.html
 
-from lessons import *  # We use this variant of import because there can be many lessons
-
+#from lessons import *  # We use this variant of import because there can be many lessons
+import lessons
 
 class TutorHTMLWindow(wx.html.HtmlWindow):
     # We need to subclass to be able to intercept OnLinkClicked event
@@ -78,7 +78,10 @@ class LessonsWindow(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
     def OnLinkClicked(self, linkinfo):
-        print linkinfo
+        lesson = getattr(lessons, linkinfo.Href)(self.sim, self.viz_window)
+        step = getattr(lesson, 'step1')
+        step()
+        self.html_window.SetPage(getattr(lesson, 'text'))
 
     def OnPrev(self, evt):
         pass

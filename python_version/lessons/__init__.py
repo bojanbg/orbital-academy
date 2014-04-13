@@ -1,1 +1,1 @@
-__author__ = 'bojanb'
+from lesson_1 import *

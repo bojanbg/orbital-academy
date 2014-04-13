@@ -4,7 +4,6 @@ from lesson import Lesson
 class Lesson1(Lesson):
 
     def step1(self):
-        self.sim.draw_atmosphere = False
         self.text = """\
     <h3><center>Projectile Motion</center></h3>
     <p>For our first lesson, we will travel to a planet very similar to Earth, except that it is perfectly spherical and
