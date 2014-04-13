@@ -136,7 +136,7 @@ def draw_scene(glcanvas):
 
 def draw_orbits(glcanvas):
 
-    def draw_orbit(glcanvas, body):
+    def draw_orbit(body):
         """Orbital parameters:
         a = semi-major axis
         e = eccentricity [0, +inf)
@@ -172,18 +172,28 @@ def draw_orbits(glcanvas):
 
         glPopMatrix()
 
-    def draw_radius_vector(glcanvas, body):
+    def draw_radius_vector(body):
         glColor4f(*body.orbit_color)
         glBegin(GL_LINES)
         glVertex3f(0.0, 0.0, 0.0)
         glVertex3f(*body.r)
         glEnd()
 
+    def draw_trajectory(body):
+        glColor4f(*body.orbit_color)
+        glBegin(GL_POINTS)
+        for point in body.trajectory:
+            glVertex3f(*point)
+        glEnd()
+
     for body in glcanvas.sim.bodies:
-        if body.orbit_viz_mode != Body.ORBIT_VISUALISATIONS['none']:
-            draw_orbit(glcanvas, body)
-        if body.pos_viz_mode == Body.POSITION_VISUALISATIONS['rv']:
-            draw_radius_vector(glcanvas, body)
+        if body.record_trajectory:  # Draw just the trajectory
+            draw_trajectory(body)
+        else:  # Draw orbit
+            if body.orbit_viz_mode != Body.ORBIT_VISUALISATIONS['none']:
+                draw_orbit(body)
+            if body.pos_viz_mode == Body.POSITION_VISUALISATIONS['rv']:
+                draw_radius_vector(body)
 
 
 def draw_orbit_symbology(glcanvas):

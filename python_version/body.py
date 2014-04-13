@@ -9,7 +9,7 @@ class Body(object):
     POSITION_VISUALISATIONS = {'symbol': 0, 'rv': 1, 'dot': 2}
     ORBIT_VISUALISATIONS = {'all': 0, 'orbit': 1, 'none': 2}
 
-    def __init__(self, r, v, t0, orbit_color=(1.0, 1.0, 0.0, 1.0), stipple=None):
+    def __init__(self, r, v, t0, orbit_color=(1.0, 1.0, 0.0, 1.0), stipple=None, record_trajectory=False):
         if isinstance(r, tuple):
             r = numpy.array(r)
         if isinstance(v, tuple):
@@ -19,6 +19,8 @@ class Body(object):
         self.t0 = t0
         self.orbit_color = orbit_color
         self.stipple = stipple
+        self.record_trajectory = record_trajectory
+        self.trajectory = []
 
         self.r0 = r
         self.r0_ = numpy.linalg.norm(self.r0)
@@ -146,6 +148,9 @@ class Body(object):
         g_dot = 1.0 - x**2 / r_ * C
         f_dot = SQRT_EARTH_MU / (self.r0_ * r_) * x * (z * S - 1.0)
         self.v = f_dot * self.r0 + g_dot * self.v0
+
+        if self.record_trajectory:
+            self.trajectory.append(self.r)
 
     def prograde(self):
         """Returns a unit vector in the prograde direction, ie. normalize(self.v)."""
