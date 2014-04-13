@@ -14,7 +14,7 @@ sudo apt-get install python-opengl
 sudo pip install numpy
 ```
 
-Then execute the main project file with:
+Then execute the main project file in the ```python_version``` directory with:
 ```
 python orbitz.py
 ```
