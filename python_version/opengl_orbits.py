@@ -298,13 +298,12 @@ def draw_planet(glcanvas, atmosphere=True):
 
     if glcanvas.sim.draw_mountain:
         glBegin(GL_TRIANGLE_STRIP)
-        HEIGHT = 1E06  # 1000 km
 
         angle = 0.05  # Subtended angle of the base of the mountain
         glColor4f(0.8, 0.8, 0.8, 1.0)
         glVertex3f(0.0, EARTH_R * numpy.cos(angle), EARTH_R * numpy.sin(angle))
         glVertex3f(0.0, EARTH_R * numpy.cos(angle), -EARTH_R * numpy.sin(angle))
-        glVertex3f(0.0, EARTH_R + HEIGHT, 0.0)
+        glVertex3f(0.0, EARTH_R + glcanvas.sim.MOUNTAIN_HEIGHT, 0.0)
 
         glColor4f(0.6, 0.6, 0.6, 1.0)
         glVertex3f(-EARTH_R * numpy.sin(angle * 2), EARTH_R * numpy.cos(angle * 2), 0.0)
@@ -330,7 +329,7 @@ def draw_info(glcanvas):
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     current_body = glcanvas.sim.current_body()
-    if current_body:
+    if current_body is not None:
         glColor4f(*current_body.orbit_color) #N.B. glRasterPos fixes the currently active color so text color must be set BEFORE calling it
 
         #Orbital parameters

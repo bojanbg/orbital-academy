@@ -35,7 +35,7 @@ class LessonsWindow(wx.Frame):
     <p>Click on a lesson to start your journey!</p>
     <ol>
         <li>Conic Sections</li>
-        <li><a href="Lesson1">Orbital Motion</a></li>
+        <li><a href="Lesson2">Orbital Motion</a></li>
         <li>Orbital Elements - Equatorial Orbits</li>
         <li>Circular Orbits</li>
         <li><a href="Lesson5">Hohman Transfers</a></li>

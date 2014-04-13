@@ -2,16 +2,18 @@ from body import Body, EARTH_MU
 
 
 class Simulation(object):
+    MOUNTAIN_HEIGHT = 1E06  # 1000 km
 
     def __init__(self, num_random_objs):
         self.bodies = []
-        self.selected_body = 0
+        self.selected_body = None
 
-        self.bodies.append(Body.generate_circular_equatorial_orbit(6.0E5, (0.0, 1.0, 1.0, 1.0)))
-        self.bodies.append(Body.generate_circular_equatorial_orbit(1.2E6))
-
-        for x in xrange(num_random_objs):
-            self.bodies.append(Body.generate_random_orbit())
+        if num_random_objs > 0:
+            self.selected_body = 0
+            self.bodies.append(Body.generate_circular_equatorial_orbit(6.0E5, (0.0, 1.0, 1.0, 1.0)))
+            self.bodies.append(Body.generate_circular_equatorial_orbit(1.2E6))
+            for x in xrange(num_random_objs):
+                self.bodies.append(Body.generate_random_orbit())
 
         self.pos_viz_mode = Body.POSITION_VISUALISATIONS['symbol']
         self.orbit_viz_mode = Body.ORBIT_VISUALISATIONS['all']

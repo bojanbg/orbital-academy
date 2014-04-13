@@ -15,8 +15,6 @@ class Lesson5(Lesson):
         self.sim.__init__(0)
         self.sim.bodies = [Body.generate_circular_equatorial_orbit(1.0E6, (0.0, 1.0, 1.0, 1.0)),
                            Body.generate_circular_equatorial_orbit(1.0E7)]
-        self.sim.bodies[0].record_trajectory = True
-        self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
 
         self.reset_sim()
         self.sim.time_barrier = 1000.0

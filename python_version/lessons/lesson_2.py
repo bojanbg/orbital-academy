@@ -1,7 +1,8 @@
 from lesson import Lesson
+from body import Body, EARTH_R
 
 
-class Lesson1(Lesson):
+class Lesson2(Lesson):
 
     def step1(self):
         self.text = """\
@@ -13,8 +14,15 @@ class Lesson1(Lesson):
     <p>If we throw a rock horizontally from the top of the mountain (let's say with a velocity of 1 km/s), it will
      it will trace a parabola and impact a ground at some distance from the base of the mountain.</p>
 """
-        self.sim.selected_body = None
-        self.sim.bodies = []
+        self.sim.__init__(0)
+        self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (1000, 0.0, 0.0), 0.0)]
+        self.sim.bodies[0].record_trajectory = True
+        self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
+        self.sim.selected_body = 0
+
+        self.reset_sim()
+        self.sim.time_step = 5.0
+        self.sim.time_barrier = 530.0
         self.sim.draw_atmosphere = False
         self.sim.draw_mountain = True
         self.sim.planet_transparent = False
@@ -24,6 +32,9 @@ class Lesson1(Lesson):
         self.text = """\
     <p>And it's step 2!</p>
 """
+        self.sim.bodies[0].record_trajectory = True
+        self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
+
 
 
 class Demo1(Lesson):
