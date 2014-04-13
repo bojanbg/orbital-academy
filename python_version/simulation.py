@@ -21,10 +21,10 @@ class Simulation(object):
         self.set_defaults()
 
     def set_defaults(self):
+        self.state = 'pre-run'
         self.time = 0.0
         self.time_step = 10.0
         self.time_barrier = 1.0E15
-        self.running = False
 
         self.draw_atmosphere = True
         self.draw_mountain = False
@@ -36,6 +36,17 @@ class Simulation(object):
         else:
             return None
 
+    def start(self):
+        if self.state in ('pre-run', 'paused'):
+            self.state = 'running'
+
+    def pause(self):
+        if self.state == 'running':
+            self.state = 'paused'
+
     def step_time(self):
-        if self.running and self.time < self.time_barrier:
-            self.time += self.time_step
+        if self.state != 'finished':
+            if self.state == 'running' and self.time < self.time_barrier:
+                self.time += self.time_step
+            else:
+                self.state = 'finished'

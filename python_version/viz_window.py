@@ -77,6 +77,7 @@ class VizWindow(wx.Frame):
         wx.Frame.__init__(self, None, title="Orbital Academy v0.1", size=(1024, 1024),
                           style=wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION)
         self.sim = sim
+        self.sim_state_change_callback = None  # Object to call if sim state changes
         self.main_panel = wx.Panel(self)
         self.gl_canvas = OrbitzGLCanvas(self.main_panel, self.sim)
         self.switch_view_north()
@@ -167,22 +168,34 @@ class VizWindow(wx.Frame):
         self.gl_canvas.Refresh()
 
     def OnStartSim(self, evt):
-        self.menu.Enable(self.ID_Start_Sim, False)
-        self.menu.Enable(self.ID_Pause_Sim, True)
-        self.timer.Start(40)
-        self.sim.running = True
+        old_sim_state = self.sim.state
+        self.sim.start()
+        if self.sim.state == 'running':
+            self.menu.Enable(self.ID_Start_Sim, False)
+            self.menu.Enable(self.ID_Pause_Sim, True)
+            self.timer.Start(40)
+        if old_sim_state != self.sim.state:
+            self.sim_state_change_callback.OnSimStateChange()
 
     def OnPauseSim(self, evt):
-        self.menu.Enable(self.ID_Pause_Sim, False)
-        self.menu.Enable(self.ID_Start_Sim, True)
-        self.timer.Stop()
-        self.sim.running = False
+        old_sim_state = self.sim.state
+        self.sim.pause()
+        if self.sim.state == 'paused':
+            self.menu.Enable(self.ID_Pause_Sim, False)
+            self.menu.Enable(self.ID_Start_Sim, True)
+            self.timer.Stop()
+        if old_sim_state != self.sim.state:
+            self.sim_state_change_callback.OnSimStateChange()
 
     def OnTimer(self, evt):
+        old_sim_state = self.sim.state
         self.sim.step_time()
-        for body in self.sim.bodies:
-            body.calc_state_vectors(self.sim.time)
+        if self.sim.state == 'running':
+            for body in self.sim.bodies:
+                body.calc_state_vectors(self.sim.time)
         self.gl_canvas.Refresh()
+        if old_sim_state != self.sim.state:
+            self.sim_state_change_callback.OnSimStateChange()
 
     def OnCloseWindow(self, evt):
         # Don't let user close this window

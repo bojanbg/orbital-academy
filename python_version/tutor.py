@@ -53,10 +53,11 @@ class LessonsWindow(wx.Frame):
 """
 
     def __init__(self, parent, sim, viz_window):
-        wx.Frame.__init__(self, None, title="Instructions", size=(640, 1024))
+        wx.Frame.__init__(self, None, title="Instructions", size=(640, 800))
         self.parent = parent
         self.sim = sim
         self.viz_window = viz_window
+        self.viz_window.sim_state_change_callback = self  # Set up callback for sim state changes
 
         self.lesson = None
         self.lesson_step = None
@@ -67,9 +68,9 @@ class LessonsWindow(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnPrev, button_prev)
         subbox.Add(button_prev, 1, wx.GROW | wx.ALL, 2)
 
-        button_play_pause = wx.Button(self, -1, 'Run/Puase')
-        self.Bind(wx.EVT_BUTTON, self.OnRunPause, button_play_pause)
-        subbox.Add(button_play_pause, 1, wx.GROW | wx.ALL, 2)
+        self.button_start_pause = wx.Button(self, -1, 'Start')
+        self.Bind(wx.EVT_BUTTON, self.OnStartPause, self.button_start_pause)
+        subbox.Add(self.button_start_pause, 1, wx.GROW | wx.ALL, 2)
 
         button_next = wx.Button(self, -1, 'Next')
         self.Bind(wx.EVT_BUTTON, self.OnNext, button_next)
@@ -91,6 +92,7 @@ class LessonsWindow(wx.Frame):
         self.lesson_step = 1
         step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
         step_method()
+        self.lesson.reset_sim()
         self.html_window.SetPage(getattr(self.lesson, 'text'))
 
     def OnPrev(self, evt):
@@ -98,25 +100,44 @@ class LessonsWindow(wx.Frame):
             self.lesson_step -= 1
             step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
             step_method()
+            self.lesson.reset_sim()
             self.html_window.SetPage(getattr(self.lesson, 'text'))
         else:
             self.html_window.SetPage(self.INITIAL_CONTENTS)
+        self.OnSimStateChange()
 
     def OnNext(self, evt):
         try:
             step_method = getattr(self.lesson, 'step%d' % (self.lesson_step + 1))
             self.lesson_step += 1
             step_method()
+            self.lesson.reset_sim()
             self.html_window.SetPage(getattr(self.lesson, 'text'))
         except AttributeError:
             pass
+        self.OnSimStateChange()
 
-    def OnRunPause(self, evt):
-        if self.sim.running:
+    def OnStartPause(self, evt):
+        if self.sim.state == 'running':
             self.viz_window.OnPauseSim(None)
-        else:
+        elif self.sim.state in ('pre-run', 'paused'):
+            self.viz_window.OnStartSim(None)
+        elif self.sim.state == 'finished':
+            # Reset sim
+            step_method = getattr(self.lesson, 'step%d' % self.lesson_step)
+            step_method()
+            self.lesson.reset_sim()
             self.viz_window.OnStartSim(None)
 
     def OnClose(self, evt):
         self.viz_window.OnClose(None)
         self.Destroy()
+
+    def OnSimStateChange(self):
+        print self.sim.state
+        if self.sim.state == 'running':
+            self.button_start_pause.SetLabel('Pause')
+        elif self.sim.state == 'paused':
+            self.button_start_pause.SetLabel('Resume')
+        elif self.sim.state == 'finished':
+            self.button_start_pause.SetLabel('Restart')

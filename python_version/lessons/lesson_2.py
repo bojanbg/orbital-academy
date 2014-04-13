@@ -4,6 +4,17 @@ from body import Body, EARTH_R
 
 class Lesson2(Lesson):
 
+    def reset_sim(self):
+        self.sim.set_defaults()
+        self.viz_window.switch_view_north()
+        self.sim.time_step = 5.0
+        self.sim.time_barrier = 530.0
+        self.sim.draw_atmosphere = False
+        self.sim.draw_mountain = True
+        self.sim.planet_transparent = False
+        self.viz_window.switch_view_north()
+
+
     def step1(self):
         self.text = """\
     <h3><center>Projectile Motion</center></h3>
@@ -13,6 +24,9 @@ class Lesson2(Lesson):
 
     <p>If we throw a rock horizontally from the top of the mountain (let's say with a velocity of 1 km/s), it will
      it will trace a parabola and impact a ground at some distance from the base of the mountain.</p>
+
+    <p>Click <b>Start</b> below to see what happens. Click <b>Next</b> after the simulation is done to
+    go to the next step in the lesson.</p>
 """
         self.sim.__init__(0)
         self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (1000, 0.0, 0.0), 0.0)]
@@ -20,21 +34,19 @@ class Lesson2(Lesson):
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
         self.sim.selected_body = 0
 
-        self.reset_sim()
-        self.sim.time_step = 5.0
-        self.sim.time_barrier = 530.0
-        self.sim.draw_atmosphere = False
-        self.sim.draw_mountain = True
-        self.sim.planet_transparent = False
-        self.viz_window.switch_view_north()
-
     def step2(self):
         self.text = """\
-    <p>And it's step 2!</p>
+    <h3><center>Projectile Motion - 2</center></h3>
+    <p>Now let's see what happens when we throw the same rock from the same mountain, but this time with
+    more horizontal velocity. We'll keep the previous trajectory on the screen for comparison</p>
+
+    <p>Again, click <b>Start</b> below to see what happens.</p>
 """
+        self.sim.__init__(0)
+        self.sim.bodies = [Body((0.0, EARTH_R + self.sim.MOUNTAIN_HEIGHT, 0.0),  (2000, 0.0, 0.0), 0.0)]
         self.sim.bodies[0].record_trajectory = True
         self.sim.bodies[0].orbit_viz_mode = Body.ORBIT_VISUALISATIONS['none']
-
+        self.sim.selected_body = 0
 
 
 class Demo1(Lesson):
