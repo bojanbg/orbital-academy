@@ -55,3 +55,11 @@ class Simulation(object):
         self.time = t
         for body in self.bodies:
             body.calc_state_vectors(t)
+
+
+            # iss.a = 415000 + 42000 + 2 * 6.371E6
+            # iss.T = 5575.12
+            # iss.e = 0.0003706
+            # iss.i = math.radians(51.647)
+            # iss.o = math.radians(284.7313)
+            # iss.w = math.radians(60.0528)

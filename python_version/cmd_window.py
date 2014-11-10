@@ -5,7 +5,7 @@ import wx.html
 class CommandWindow(wx.Frame):
 
     def __init__(self, parent, sim, viz_window):
-        wx.Frame.__init__(self, None, title="Command List", size=(320, 480))
+        wx.Frame.__init__(self, None, title="Command List", size=(320, 320))
         self.parent = parent
         self.sim = sim
         self.viz_window = viz_window
